@@ -17,6 +17,7 @@
         <activity android:name="com.example.smartnote.CardCreator"/>
         <activity android:name="com.example.smartnote.Card"
         		android:screenOrientation="landscape" />
+        <activity android:name = "com.example.smartnote.StackMenu"/>
 
     </application>
 </manifest>

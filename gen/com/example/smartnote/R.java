@@ -16,16 +16,19 @@ public final class R {
     }
     public static final class id {
         public static final int backward=0x7f050005;
-        public static final int createCard=0x7f05000a;
-        public static final int createNew=0x7f05000d;
+        public static final int createCard=0x7f05000d;
+        public static final int createNew=0x7f050010;
         public static final int defTxt=0x7f050001;
-        public static final int definition=0x7f05000b;
-        public static final int definition_header=0x7f050009;
+        public static final int definition=0x7f05000e;
+        public static final int definition_header=0x7f05000c;
         public static final int flip=0x7f050006;
         public static final int flipper=0x7f050000;
         public static final int forward=0x7f050004;
+        public static final int newStack=0x7f05000b;
         public static final int speak=0x7f050003;
-        public static final int stacks=0x7f05000c;
+        public static final int stackButton=0x7f05000a;
+        public static final int stack_header=0x7f050009;
+        public static final int stacks=0x7f05000f;
         public static final int title=0x7f050008;
         public static final int titleTxt=0x7f050002;
         public static final int title_header=0x7f050007;

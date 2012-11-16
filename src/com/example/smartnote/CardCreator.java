@@ -34,14 +34,22 @@ public class CardCreator extends Activity {
 		titleTxt.setTypeface(chinacat);
 		TextView defTxt = (TextView)findViewById(R.id.definition_header);
 		defTxt.setTypeface(chinacat);
+		TextView stackTxt = (TextView)findViewById(R.id.stack_header);
+		stackTxt.setTypeface(chinacat);
 		
 		Button cardCreator = (Button)findViewById(R.id.createCard);
 		cardCreator.setTypeface(chinacat);
+		Button stackChooser = (Button)findViewById(R.id.stackButton);
+		stackChooser.setTypeface(chinacat);
 		
+		
+		EditText sInput = (EditText)findViewById(R.id.newStack);
+		sInput.setTypeface(chinacat);
 		EditText tInput = (EditText)findViewById(R.id.title);
 		tInput.setTypeface(chinacat);
 		EditText defInput = (EditText)findViewById(R.id.definition);
 		defInput.setTypeface(chinacat);
+		
 			
 	}
 	
@@ -53,7 +61,7 @@ public class CardCreator extends Activity {
 	public void createCard(View view) {
 		
 		getText();
-		
+						
 		if (title.isEmpty() || definition.isEmpty())
 			Toast.makeText(getApplicationContext(), "Your card contains unwritten side(s)", Toast.LENGTH_SHORT).show();
 		else {
@@ -75,7 +83,16 @@ public class CardCreator extends Activity {
 					Toast.makeText(getApplicationContext(), "not inserted!", Toast.LENGTH_SHORT).show();
 			}
 			
-		}
+		} 
+	}
+	
+	public void toStacks(View view) {
+		
+		Intent intent = new Intent(CardCreator.this, StackMenu.class);
+		
+		Toast.makeText(getApplicationContext(), "Stack Menu", Toast.LENGTH_SHORT).show();
+
+		startActivity(intent);
 	}
 
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -110,4 +127,5 @@ public class CardCreator extends Activity {
 		editText = (EditText)findViewById(R.id.definition);
 		definition = editText.getText().toString();
 	}
+	
 }

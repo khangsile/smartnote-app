@@ -38,8 +38,6 @@ public class Card extends Activity implements OnInitListener {
 		
 		initialize();
 		toChinaCat();
-		
-		
 	}
 	
 		
