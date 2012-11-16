@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="#ffff88">
+ <TextView android:id="@+id/title_header"
+ 	android:layout_width="wrap_content"
+ 	android:layout_height="wrap_content"
+ 	android:layout_marginTop="10dp"
+ 	android:textSize="20dp"
+ 	android:textColor="#000"
+ 	android:textStyle="italic"
+ 	android:text="Title:" />
+ <EditText android:id="@+id/title"
+	android:layout_width="fill_parent"
+	android:layout_height="50dp"
+	android:layout_toRightOf="@id/title_header"
+	android:background = "#ffff88"
+	android:singleLine="true" />
+ <TextView android:id="@+id/definition_header"
+ 	android:layout_width="wrap_content"
+ 	android:layout_height="wrap_content"
+ 	android:layout_below="@id/title"
+ 	android:textSize="20dp"
+ 	android:textColor="#000"
+ 	android:text="Definition:" />
+ <Button android:id="@+id/createCard"
+ 	android:layout_width="fill_parent"
+ 	android:layout_height="wrap_content"
+ 	android:layout_alignParentBottom="true"
+ 	android:text = "Create A Card" 
+ 	android:onClick = "createCard" />
+ <EditText android:id="@+id/definition"
+ 	android:layout_width="fill_parent"
+ 	android:layout_height="match_parent"
+ 	android:layout_below="@id/definition_header"
+ 	android:layout_above = "@id/createCard"
+ 	android:gravity="top" />
+ 
+ 	
+</RelativeLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="#ffff88">
+  
+   <ViewFlipper 
+    android:id = "@+id/flipper"
+  	android:layout_width="fill_parent"
+ 	android:layout_height="fill_parent" >
+ 
+ 		<TextView android:id="@+id/defTxt"
+ 			android:paddingTop="63dp"
+ 			android:layout_height="fill_parent"
+ 			android:layout_width="fill_parent"
+ 			android:text="Definitions"
+ 			android:textSize = "20dp"
+ 			android:textColor="#000000"
+ 			android:background = "@drawable/notecard"
+ 		/>
+ 		
+ 		<TextView android:id="@+id/titleTxt"
+ 			android:layout_height="wrap_content"
+ 			android:layout_width="wrap_content"
+ 			android:layout_gravity="center"
+ 			android:text="Titles"
+  			android:textSize = "20dp"			
+ 			android:textColor="#000000"
+ 		/>
+ 	
+ 	</ViewFlipper>
+ 
+ 	<Button android:id = "@+id/speak"
+ 		android:layout_alignParentTop = "true"
+ 		android:layout_alignParentRight = "true"
+ 		android:layout_height = "wrap_content"
+ 		android:layout_width = "wrap_content"
+ 		android:background = "#ffff88"
+ 		android:text = "S"
+ 		android:textSize = "30dp"
+ 		android:onClick = "talk" />
+  	<Button android:id = "@+id/forward"
+  		android:layout_alignParentBottom="true"
+  		android:layout_alignParentRight="true"
+  		android:layout_height="wrap_content"
+  		android:layout_width="wrap_content"
+  		android:background="#ffff88"
+  		android:text="Forward" 		 		
+  		android:textSize = "30dp"
+  		android:onClick="moveForward"
+  	/>
+  	<Button android:id = "@+id/backward"
+  		android:layout_alignParentBottom="true"
+  		android:layout_alignParentLeft="true"
+  		android:layout_height="wrap_content"
+  		android:layout_width="wrap_content"
+  		android:background="#ffff88"
+  		android:text="Backward"
+  		android:textSize = "30dp"	
+  		android:onClick="moveBackward"
+  	/>
+  	<Button android:id = "@+id/flip"
+  		android:layout_alignParentBottom="true"
+  		android:layout_centerHorizontal="true"
+  		android:layout_height="wrap_content"
+  		android:layout_width="wrap_content"
+  		android:background="#ffff88"
+  		android:text="Flip"
+  		android:textSize = "30dp"	
+  		android:onClick="flip"
+  	/> 
+  
+</RelativeLayout>
+
