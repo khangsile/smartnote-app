@@ -125,6 +125,11 @@ public class SmartDBAdapter {
     
     public Cursor getItems() {
     	return db.query("Cards", new String[] { ROW_ID, TITLE, DEFINITION }, null,
-    	null, null, null, null);
-    	}
+    			null, null, null, null);
+    }
+    
+    public Cursor getStacks() {
+    	return db.query(STACK_TABLE, new String[] {STACK_ID, STACK_NAME}, null, 
+    			null, null, null, null);
+    }
 }
