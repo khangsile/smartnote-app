@@ -2,4 +2,12 @@
 <resources>
     <string name="hello">Hello World, SmartNoteActivity!</string>
     <string name="app_name">SmartNote</string>
+    <string name="cardCreate">Create a Card</string>
+    <string name="define">Definition:</string>
+    <string name="stackChoose">Choose Stack</string>
+    <string name="title">Enter Title Here</string>
+    <string name="definition">Enter Definition Here</string>
+    <string name="stack">Enter Stack Here</string>
+    <string name="stackLabel">Stack:</string>
+    <string name="titleLabel">Title:</string>
 </resources>

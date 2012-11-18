@@ -1,19 +1,19 @@
 package com.example.smartnote;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
 public class StackMenu extends ListActivity {
 	
-	String menuItems[];
 	SmartDBAdapter db;
 	
 	private static final String STACK_NAME = "stackName";
+	
 	
 	private int stackNameIndex;
 	
@@ -22,27 +22,32 @@ public class StackMenu extends ListActivity {
 		
 		db = new SmartDBAdapter(this);
 		db.open();
+				
+		ArrayAdapter<Model> adapter = new InteractiveArrayAdapter(getMenuItems(), this);
 		
-		getMenuItems();
-		
-		setListAdapter(new ArrayAdapter<String>(StackMenu.this, android.R.layout.simple_list_item_1, menuItems));
+		setListAdapter(adapter);
 	}
 	
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		Toast.makeText(getApplicationContext(), menuItems[position], Toast.LENGTH_SHORT).show();
-	}
-	
-	private void getMenuItems() {
+	private List<Model> getMenuItems() {
 		Cursor cursor = db.getStacks();
-		int numStacks = cursor.getCount();
-		menuItems = new String[numStacks];
 		stackNameIndex = cursor.getColumnIndex(STACK_NAME);
 		cursor.moveToFirst();
 		
-		for(int i = 0; !cursor.isAfterLast(); i++) {
-			menuItems[i] = cursor.getString(stackNameIndex);
+		List<Model> list = new ArrayList<Model>();
+		
+		while(!cursor.isAfterLast()) {
+			String name = cursor.getString(stackNameIndex);
+			list.add(get(name));
+			
 			cursor.moveToNext();
 		}
+		
+		return list;
+	}
+	
+	private Model get(String s) {
+		Model model = new Model(s);
+		
+		return model;
 	}
 }

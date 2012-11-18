@@ -16,6 +16,7 @@ public final class R {
     }
     public static final class id {
         public static final int backward=0x7f050005;
+        public static final int check=0x7f050012;
         public static final int createCard=0x7f05000d;
         public static final int createNew=0x7f050010;
         public static final int defTxt=0x7f050001;
@@ -24,6 +25,7 @@ public final class R {
         public static final int flip=0x7f050006;
         public static final int flipper=0x7f050000;
         public static final int forward=0x7f050004;
+        public static final int label=0x7f050011;
         public static final int newStack=0x7f05000b;
         public static final int speak=0x7f050003;
         public static final int stackButton=0x7f05000a;
@@ -37,9 +39,18 @@ public final class R {
         public static final int card=0x7f030000;
         public static final int creator=0x7f030001;
         public static final int main=0x7f030002;
+        public static final int stackchoice=0x7f030003;
     }
     public static final class string {
         public static final int app_name=0x7f040001;
+        public static final int cardCreate=0x7f040002;
+        public static final int define=0x7f040003;
+        public static final int definition=0x7f040006;
         public static final int hello=0x7f040000;
+        public static final int stack=0x7f040007;
+        public static final int stackChoose=0x7f040004;
+        public static final int stackLabel=0x7f040008;
+        public static final int title=0x7f040005;
+        public static final int titleLabel=0x7f040009;
     }
 }
