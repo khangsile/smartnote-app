@@ -3,6 +3,7 @@ package com.example.smartnote;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,12 @@ public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 		ViewHolder holder = (ViewHolder) view.getTag();
 	    holder.text.setText(list.get(position).getName());
 	    holder.check.setChecked(list.get(position).isSelected());
+	    
+	    Typeface chinacat = Typeface.createFromAsset(holder.text.getContext()
+	            .getAssets(), "fonts/DroidSans-Bold.ttf");
+	    
+	    holder.text.setTypeface(chinacat);
+
 	    return view;
 	    
 		

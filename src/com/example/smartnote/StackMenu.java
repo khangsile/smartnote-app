@@ -4,28 +4,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 public class StackMenu extends ListActivity {
 	
 	SmartDBAdapter db;
 	
 	private static final String STACK_NAME = "stackName";
-	
-	
+	private String stack, definition, title;
+
 	private int stackNameIndex;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.stackmenu);
+		
+		Intent intent = getIntent();
+		
+		stack = intent.getStringExtra("stack");
+		definition = intent.getStringExtra("definition");
+		title = intent.getStringExtra("title");
 		
 		db = new SmartDBAdapter(this);
 		db.open();
+		
+		Typeface chinacat = Typeface.createFromAsset(getAssets(), "fonts/DroidSans-Bold.ttf");
+		
+		TextView header = (TextView) findViewById(R.id.stackheader);
+		header.setTypeface(chinacat);
 				
 		ArrayAdapter<Model> adapter = new InteractiveArrayAdapter(getMenuItems(), this);
-		
+							
 		setListAdapter(adapter);
+		
+		db.close();
+		
 	}
 	
 	private List<Model> getMenuItems() {
@@ -41,7 +60,7 @@ public class StackMenu extends ListActivity {
 			
 			cursor.moveToNext();
 		}
-		
+		list.get(0).setSelected(true);
 		return list;
 	}
 	
@@ -49,5 +68,14 @@ public class StackMenu extends ListActivity {
 		Model model = new Model(s);
 		
 		return model;
+	}
+	
+	public void cancel(View view) {
+		Intent intent = new Intent(this, CardCreator.class);
+		intent.putExtra("title", title);
+		intent.putExtra("definition", definition);
+		intent.putExtra("stack", stack);
+		
+		startActivity(intent);
 	}
 }

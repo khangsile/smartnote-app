@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:id="@+id/top_control_bar">
+		<TextView android:id = "@+id/stackheader"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:textSize = "50dp"
+		android:text = "The Stacks" 
+		android:background = "#444444"/>
+				    
+	</RelativeLayout>
+	<LinearLayout android:id="@+id/bottom_control_bar"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:weightSum="1">
+		<Button android:id ="@+id/addStacks" 
+		    android:layout_width="0dp"
+			android:layout_height="wrap_content" 
+			android:text="Add Stacks"
+			android:layout_weight = ".5" />
+		<Button android:id = "@+id/cancel"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_toRightOf="@id/addStacks"
+		    android:text = "Cancel"
+		    android:layout_weight = ".5"
+		    android:onClick = "cancel" />
+	</LinearLayout>
+	<ListView android:id="@android:id/list" 
+	    android:layout_width="fill_parent"
+		android:layout_height="0dip" 
+		android:choiceMode="multipleChoice"
+		android:layout_below="@id/top_control_bar" 
+		android:layout_above="@id/bottom_control_bar"></ListView>
+	<TextView android:id="@android:id/empty" 
+	    android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:layout_below="@id/top_control_bar" 
+		android:layout_above="@id/bottom_control_bar" />
+</RelativeLayout>

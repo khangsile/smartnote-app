@@ -1,5 +1,7 @@
 package com.example.smartnote;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -16,21 +18,20 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class Card extends Activity implements OnInitListener {
-	
-	SmartDBAdapter db;
-	
-	public static final String KEY_DEFS = "definition"; 
-	public static final String KEY_TITLES = "title";
-	private static final String CURSOR_POS = "cursorPos";
+		
+	private static final String KEY_DEFS = "definition"; 
+	private static final String KEY_TITLES = "title";
 	private static final String FLIP_TAB = "flipperTab";
 	
-	private int defIndex, titleIndex, MY_DATA_CHECK_CODE = 0;
-	private Cursor cursor;
+	private int MY_DATA_CHECK_CODE = 0;
 	
 	private TextView defTxt, titleTxt;
 	private Button flipHandler, forward, backward, speak;
 	private ViewFlipper flipper;
 	private TextToSpeech myTTS;
+	
+	private List<CardModel> cardList;
+	private int cardListIndex = 0;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,21 +39,36 @@ public class Card extends Activity implements OnInitListener {
 		
 		initialize();
 		toChinaCat();
+		
+		getCard();
 	}
 	
 		
 	private void initialize() {
 		
-		db = new SmartDBAdapter(this);
+		SmartDBAdapter db = new SmartDBAdapter(this);
 		db.open();
 				
-		cursor = db.getItems();
+		Cursor cursor = db.getItems();
 		
-		defIndex = cursor.getColumnIndex(KEY_DEFS);
-		titleIndex = cursor.getColumnIndex(KEY_TITLES);
+		int defIndex = cursor.getColumnIndex(KEY_DEFS);
+		int titleIndex = cursor.getColumnIndex(KEY_TITLES);
 				
 		cursor.moveToFirst();
-				
+			
+		cardList = new ArrayList<CardModel>();
+		
+		while (!cursor.isAfterLast()) {
+			
+			String title = cursor.getString(titleIndex);
+			String definition = cursor.getString(defIndex);
+			cardList.add(get(title, definition));
+			
+			cursor.moveToNext();
+		}
+		
+		db.close();
+		
 		titleTxt = (TextView)findViewById(R.id.titleTxt);
 		defTxt = (TextView)findViewById(R.id.defTxt);
 		
@@ -66,16 +82,16 @@ public class Card extends Activity implements OnInitListener {
 		Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+	}
 
-		
-		getCard();
-		
+	private CardModel get(String title, String definition) {
+		return new CardModel(title, definition);
 	}
 	
 	private void getCard() {
 		
-		String definition = cursor.getString(defIndex);
-		String title = cursor.getString(titleIndex);
+		String definition = cardList.get(cardListIndex).getDef();
+		String title = cardList.get(cardListIndex).getTitle();
 		
 		titleTxt.setText(title);
 		defTxt.setText(definition);
@@ -96,39 +112,33 @@ public class Card extends Activity implements OnInitListener {
 	}
 	
 	public void moveForward(View view) {
-		if (!cursor.isLast()) {
-			cursor.moveToNext();
-		} else {
+		if (cardListIndex != cardList.size()-1) 
+			cardListIndex++;
+		else 
 			Toast.makeText(getApplicationContext(), "End of the Deck", Toast.LENGTH_SHORT).show();
-		}
-		
-		getCard();
 
+		getCard();
 	}
 	
 	public void moveBackward(View view) {
-		if (!cursor.isFirst()) {
-			cursor.moveToPrevious();
-		} else {
+		if (cardListIndex != 0) 
+			cardListIndex--;
+		else 
 			Toast.makeText(getApplicationContext(), "Beginning of the Deck", Toast.LENGTH_SHORT).show();
-		}
 		
 		getCard();
-		
 	}
 	
 	public void flip(View view) {
-		
 		flipper.showNext();
 	}
 	
 	public void talk(View view) {
-		
 		int flipperView = flipper.getDisplayedChild();
 		int flipperTitle = flipper.indexOfChild(titleTxt);
 		
-		String title = cursor.getString(titleIndex);
-		String def = cursor.getString(defIndex);
+		String title = cardList.get(cardListIndex).getTitle();
+		String def = cardList.get(cardListIndex).getDef();
 		
 		if (flipperTitle == flipperView)
 			readCard(title);
@@ -138,39 +148,24 @@ public class Card extends Activity implements OnInitListener {
 	}
 	
 	private void readCard(String phrase) {
-		
 		myTTS.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
 	}
 	
-	public void onSaveInstanceState(Bundle savedInstanceState) {
-		
+	public void onSaveInstanceState(Bundle savedInstanceState) {	
 		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());
-		savedInstanceState.putInt(CURSOR_POS, cursor.getPosition());
 		
 		super.onSaveInstanceState(savedInstanceState);
 	}
 	
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		
-		int cursorPosition = savedInstanceState.getInt(CURSOR_POS);
 		int flipperPos = savedInstanceState.getInt(FLIP_TAB);
-		
-		cursor.moveToPosition(cursorPosition);
-		
-		String title = cursor.getString(titleIndex);
-		String def = cursor.getString(defIndex);
-		
-		titleTxt.setText(title);
-		defTxt.setText(def);
-		
+								
 		flipper.setDisplayedChild(flipperPos);
-		
 	}
 	
 	public void onDestroy() {
 		super.onDestroy();
-		db.close();
 	}
 	
 		
@@ -180,8 +175,7 @@ public class Card extends Activity implements OnInitListener {
 	            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 	                //the user has the necessary data - create the TTS
 	            myTTS = new TextToSpeech(this, this);
-	            }
-	            else {
+	            } else {
 	                    //no data - install it now
 	                Intent installTTSIntent = new Intent();
 	                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
@@ -192,12 +186,11 @@ public class Card extends Activity implements OnInitListener {
 	
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
-		
 		if (status == TextToSpeech.SUCCESS) {
 			if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE) 
 				myTTS.setLanguage(Locale.US);
 		} else {
-			Toast.makeText(getApplicationContext(), "Sorry...Text To Speech Error", Toast.LENGTH_SHORT);
+			Toast.makeText(getApplicationContext(), "Sorry...Text To Speech Error", Toast.LENGTH_SHORT).show();
 		}
 	}
 
