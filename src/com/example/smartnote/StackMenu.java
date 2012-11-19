@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class StackMenu extends ListActivity {
 	
@@ -25,11 +26,11 @@ public class StackMenu extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stackmenu);
 		
-		Intent intent = getIntent();
+		Bundle extras = getIntent().getExtras();
 		
-		stack = intent.getStringExtra("stack");
-		definition = intent.getStringExtra("definition");
-		title = intent.getStringExtra("title");
+		stack = extras.getString("stack");
+		definition = extras.getString("definition");
+		title = extras.getString("title");
 		
 		db = new SmartDBAdapter(this);
 		db.open();
@@ -42,7 +43,7 @@ public class StackMenu extends ListActivity {
 		ArrayAdapter<Model> adapter = new InteractiveArrayAdapter(getMenuItems(), this);
 							
 		setListAdapter(adapter);
-		
+				
 		db.close();
 		
 	}

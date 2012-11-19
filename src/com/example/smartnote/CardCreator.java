@@ -19,8 +19,9 @@ public class CardCreator extends Activity {
 	
 	static final String TITLE = "mytitles";
 	static final String DEFINITION = "mydefinitions";
-	String definition, title, stack;
-	
+	String definition = " ", title = " ", stack = " ";
+	private EditText sInput, tInput, defInput;
+		
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.creator);
@@ -43,23 +44,19 @@ public class CardCreator extends Activity {
 		stackChooser.setTypeface(chinacat);
 		
 		
-		EditText sInput = (EditText)findViewById(R.id.newStack);
+		sInput = (EditText)findViewById(R.id.newStack);
 		sInput.setTypeface(chinacat);
-		EditText tInput = (EditText)findViewById(R.id.title);
+		tInput = (EditText)findViewById(R.id.title);
 		tInput.setTypeface(chinacat);
-		EditText defInput = (EditText)findViewById(R.id.definition);
+		defInput = (EditText)findViewById(R.id.definition);
 		defInput.setTypeface(chinacat);
 		
-		Intent intent = getIntent();
-		String action = intent.getAction();
-		String type = intent.getType();
+		Bundle extras = getIntent().getExtras();
 				
-		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			if ("text/plain".equals(type)) {
-				sInput.setText(intent.getStringExtra("stack"));
-				tInput.setText(intent.getStringExtra("title"));
-				defInput.setText(intent.getStringExtra("definition"));
-			}
+		if (extras != null) {
+				sInput.setText(extras.getString("stack"));
+				tInput.setText(extras.getString("title"));
+				defInput.setText(extras.getString("definition"));
 		}
 	}
 	
@@ -97,6 +94,8 @@ public class CardCreator extends Activity {
 	}
 	
 	public void toStacks(View view) {
+		
+		getText();
 		
 		Intent intent = new Intent(CardCreator.this, StackMenu.class);
 		intent.putExtra("title", title);
