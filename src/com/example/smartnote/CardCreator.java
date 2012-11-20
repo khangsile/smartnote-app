@@ -77,7 +77,8 @@ public class CardCreator extends Activity {
 			
 			long insTester[] = new long[stacks.length];
 			for(int i=0; i < stacks.length; i++) {
-				if (db.matchCard(title, definition, stacks[i])) {
+				if (stacks[i].equals("")) {
+				}else if (db.matchCard(title, definition, stacks[i])) {
 					insTester[i] = -1;
 				} else 
 					insTester[i] = db.insertCard(title, definition, stacks[i]);
