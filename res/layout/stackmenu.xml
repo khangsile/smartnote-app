@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:background = "#ffff88">
 	<RelativeLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" 
 		android:id="@+id/top_control_bar">
@@ -10,8 +11,7 @@
 		android:layout_width="fill_parent"
 		android:textSize = "50dp"
 		android:text = "The Stacks" 
-		android:background = "#444444"/>
-				    
+		android:background = "#888888"/>
 	</RelativeLayout>
 	<LinearLayout android:id="@+id/bottom_control_bar"
 		android:layout_width="fill_parent" 
@@ -22,7 +22,8 @@
 		    android:layout_width="0dp"
 			android:layout_height="wrap_content" 
 			android:text="Add Stacks"
-			android:layout_weight = ".5" />
+			android:layout_weight = ".5"
+			android:onClick = "addStacks" />
 		<Button android:id = "@+id/cancel"
 		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"

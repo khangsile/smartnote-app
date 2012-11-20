@@ -5,23 +5,22 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class StackMenu extends ListActivity {
 	
 	SmartDBAdapter db;
 	
-	private static final String STACK_NAME = "stackName";
 	private String stack, definition, title;
-
-	private int stackNameIndex;
 	
+	InteractiveArrayAdapter adapter;
+	
+	ListView listview;
+		
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stackmenu);
@@ -31,44 +30,31 @@ public class StackMenu extends ListActivity {
 		stack = extras.getString("stack");
 		definition = extras.getString("definition");
 		title = extras.getString("title");
-		
-		db = new SmartDBAdapter(this);
-		db.open();
-		
+				
 		Typeface chinacat = Typeface.createFromAsset(getAssets(), "fonts/DroidSans-Bold.ttf");
 		
 		TextView header = (TextView) findViewById(R.id.stackheader);
 		header.setTypeface(chinacat);
 				
-		ArrayAdapter<Model> adapter = new InteractiveArrayAdapter(getMenuItems(), this);
-							
-		setListAdapter(adapter);
-				
-		db.close();
+		adapter = new InteractiveArrayAdapter(this, getMenuItems());
 		
+		setListAdapter(adapter);
+		listview = getListView();
+		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+						
 	}
 	
 	private List<Model> getMenuItems() {
-		Cursor cursor = db.getStacks();
-		stackNameIndex = cursor.getColumnIndex(STACK_NAME);
-		cursor.moveToFirst();
+		
+		db = new SmartDBAdapter(this);
+		db.open();
 		
 		List<Model> list = new ArrayList<Model>();
+		list = db.getStacks();
 		
-		while(!cursor.isAfterLast()) {
-			String name = cursor.getString(stackNameIndex);
-			list.add(get(name));
-			
-			cursor.moveToNext();
-		}
-		list.get(0).setSelected(true);
+		db.close();
 		return list;
-	}
-	
-	private Model get(String s) {
-		Model model = new Model(s);
-		
-		return model;
 	}
 	
 	public void cancel(View view) {
@@ -78,5 +64,23 @@ public class StackMenu extends ListActivity {
 		intent.putExtra("stack", stack);
 		
 		startActivity(intent);
+	}
+	
+	public void addStacks(View view) {
+	
+		List<Model> models = adapter.list;
+				
+		for (int i=0; i < models.size(); i++) {
+			if (models.get(i).isSelected()==true)
+				stack = stack + ";" + models.get(i).getName();
+		}
+		
+		Intent intent = new Intent(this, CardCreator.class);
+		intent.putExtra("title", title);
+		intent.putExtra("definition", definition);
+		intent.putExtra("stack", stack);
+		
+		startActivity(intent);
+		
 	}
 }

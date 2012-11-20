@@ -6,7 +6,10 @@
     <string name="define">Definition:</string>
     <string name="stackChoose">Choose Stack</string>
     <string name="title">Enter Title Here</string>
-    <string name="definition">Enter Definition Here</string>
+    <string name="definition">
+        Enter Definition Here \n\nThis
+        is where you create your flashcards. To place cards in more than one stack
+        use the ";" as a delimeter between stack names.</string>
     <string name="stack">Enter Stack Here</string>
     <string name="stackLabel">Stack:</string>
     <string name="titleLabel">Title:</string>

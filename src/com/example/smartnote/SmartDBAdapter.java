@@ -1,5 +1,8 @@
 package com.example.smartnote;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -96,9 +99,11 @@ public class SmartDBAdapter {
     	smartdb.close();
     }
     
-    public long insertCard(int stack, String title, String definition) {
+    public long insertCard(String title, String definition, String stack) {
+    	int stackID = getStackID(stack);
+    	
     	ContentValues values = new ContentValues();
-    	values.put(STACK, stack);
+    	values.put(STACK, stackID);
     	values.put(TITLE, title);
     	values.put(DEFINITION, definition);
     	return db.insert(CARD_TABLE, null, values);
@@ -111,11 +116,12 @@ public class SmartDBAdapter {
     	return db.insert(STACK_TABLE, STACK_ID, values);
     }
     
-    public boolean matchCard(String title, String definition) {
+    public boolean matchCard(String title, String definition, String stackName) {
+    	int stackID = getStackID(stackName);
     	Cursor cursor = db.query(CARD_TABLE, new String[] { TITLE }, 
-    			TITLE+"=? AND "+DEFINITION+"=?", new String[] { title, definition },
-    			null, null, null);
-    	
+    			TITLE+"=? AND "+DEFINITION+"=? AND " + STACK+"=?", new String[] { title, definition, 
+    			String.valueOf(stackID)}, null, null, null);
+    	    	
     	if (cursor!=null && cursor.getCount() == 1) 
     		return true;
     	
@@ -123,13 +129,75 @@ public class SmartDBAdapter {
     	
     }
     
-    public Cursor getItems() {
-    	return db.query("Cards", new String[] { ROW_ID, TITLE, DEFINITION }, null,
-    			null, null, null, null);
+    public boolean matchStack(String stack) {
+    	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_NAME},
+    			STACK_NAME+"=?", new String[] {stack}, null, null, null);
+    	
+    	if (cursor!=null && cursor.getCount() == 1)
+    		return true;
+    	
+    	return false;
     }
     
-    public Cursor getStacks() {
-    	return db.query(STACK_TABLE, new String[] {STACK_ID, STACK_NAME}, null, 
+    public int getStackID(String stackName) {
+    	SQLiteDatabase db = smartdb.getReadableDatabase();
+    	Cursor cursor = db.query(STACK_TABLE, new String[]{STACK_ID + " as _id", STACK_NAME}, 
+    			STACK_NAME + "=?",  new String[] {stackName}, null, null, null); 
+    	    	    		
+    	cursor.moveToFirst();
+        return cursor.getInt(cursor.getColumnIndex("_id"));
+    	 
+    }
+    
+    public List<CardModel> getItems(String stack) {
+    	Cursor cursor;
+    	
+    	if (stack.equals("")) {
+    	
+    		cursor = db.query("Cards", new String[] { ROW_ID, TITLE, DEFINITION }, null,
+    			null, null, null, null); 
+    	} else {
+    		int stackID = getStackID(stack);
+    		cursor = db.query("Cards", new String[] { ROW_ID, TITLE, DEFINITION, STACK}, 
+    				STACK+"=?", new String[] {String.valueOf(stackID)}, null, null, null);
+    	}
+    	
+    	int defIndex = cursor.getColumnIndex(DEFINITION);
+		int titleIndex = cursor.getColumnIndex(TITLE);
+				
+		cursor.moveToFirst();
+			
+		List<CardModel> cardList = new ArrayList<CardModel>();
+		
+		while (!cursor.isAfterLast()) {
+			
+			String title = cursor.getString(titleIndex);
+			String definition = cursor.getString(defIndex);
+			cardList.add(new CardModel(title, definition));
+			
+			cursor.moveToNext();
+		}
+		
+		return cardList;
+		
+    }
+    
+    public List<Model> getStacks() {
+    	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_ID, STACK_NAME}, null, 
     			null, null, null, null);
+    	
+		int stackNameIndex = cursor.getColumnIndex(STACK_NAME);
+		cursor.moveToFirst();
+		
+		List<Model> list = new ArrayList<Model>();
+		
+		while(!cursor.isAfterLast()) {
+			String name = cursor.getString(stackNameIndex);
+			list.add(new Model(name));
+			
+			cursor.moveToNext();
+		}
+		
+		return list;
     }
 }

@@ -1,12 +1,10 @@
 package com.example.smartnote;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -19,8 +17,6 @@ import android.widget.ViewFlipper;
 
 public class Card extends Activity implements OnInitListener {
 		
-	private static final String KEY_DEFS = "definition"; 
-	private static final String KEY_TITLES = "title";
 	private static final String FLIP_TAB = "flipperTab";
 	
 	private int MY_DATA_CHECK_CODE = 0;
@@ -46,26 +42,13 @@ public class Card extends Activity implements OnInitListener {
 		
 	private void initialize() {
 		
+		Bundle extras = getIntent().getExtras();
+		String stack = extras.getString("stack");
+		
 		SmartDBAdapter db = new SmartDBAdapter(this);
 		db.open();
 				
-		Cursor cursor = db.getItems();
-		
-		int defIndex = cursor.getColumnIndex(KEY_DEFS);
-		int titleIndex = cursor.getColumnIndex(KEY_TITLES);
-				
-		cursor.moveToFirst();
-			
-		cardList = new ArrayList<CardModel>();
-		
-		while (!cursor.isAfterLast()) {
-			
-			String title = cursor.getString(titleIndex);
-			String definition = cursor.getString(defIndex);
-			cardList.add(get(title, definition));
-			
-			cursor.moveToNext();
-		}
+		cardList = db.getItems(stack);
 		
 		db.close();
 		
@@ -83,10 +66,6 @@ public class Card extends Activity implements OnInitListener {
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 	}
-
-	private CardModel get(String title, String definition) {
-		return new CardModel(title, definition);
-	}
 	
 	private void getCard() {
 		
@@ -95,7 +74,6 @@ public class Card extends Activity implements OnInitListener {
 		
 		titleTxt.setText(title);
 		defTxt.setText(definition);
-
 	}
 	
 	private void toChinaCat() {

@@ -11,14 +11,15 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 	
-	private final List<Model> list;
+	public final List<Model> list;
 	private final Activity context;
 	
-	public InteractiveArrayAdapter(List<Model> list, Activity context) {
-		super(context, R.layout.stackchoice, list);
+	public InteractiveArrayAdapter(Activity context, List<Model> list) {
+		super(context, android.R.layout.simple_list_item_multiple_choice, R.layout.stackchoice, list);
 		
 		this.context = context;
 		this.list = list;
@@ -29,15 +30,15 @@ public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 		protected CheckBox check;
 	}
 	
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		View view = null;
-		
+				
 		if (convertView == null) {
 			LayoutInflater inflater = context.getLayoutInflater();
 			view = inflater.inflate(R.layout.stackchoice, null);
 			
 			final ViewHolder viewholder = new ViewHolder();
-			
+						
 			viewholder.text = (TextView)view.findViewById(R.id.label);
 			viewholder.check = (CheckBox)view.findViewById(R.id.check);
 			
@@ -46,8 +47,9 @@ public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 			                boolean isChecked) {
 			              Model element = (Model) viewholder.check
 			                  .getTag();
-			              element.setSelected(buttonView.isChecked());
-			            }
+			              			  			
+			              element.setSelected(buttonView.isChecked());       
+				 }
 			});
 			
 			view.setTag(viewholder);
@@ -65,9 +67,11 @@ public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 	            .getAssets(), "fonts/DroidSans-Bold.ttf");
 	    
 	    holder.text.setTypeface(chinacat);
-
+	    	    
 	    return view;
-	    
-		
+	}
+	
+	public List<Model> getList() {
+		return this.list;
 	}
 }

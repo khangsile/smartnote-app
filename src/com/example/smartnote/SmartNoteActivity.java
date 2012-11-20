@@ -26,7 +26,7 @@ public class SmartNoteActivity extends Activity {
     
     /** Sends the user to the list of their stacks */
     public void toStacks(View view) {
-    	Intent intent = new Intent(this, Card.class);
+    	Intent intent = new Intent(this, StacksGallery.class);
     	startActivity(intent);
     }
     

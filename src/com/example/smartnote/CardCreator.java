@@ -15,8 +15,8 @@ import com.example.smartnote.R;
 
 public class CardCreator extends Activity {
 	
-	SmartDBAdapter db;
-	
+	private SmartDBAdapter db;
+		
 	static final String TITLE = "mytitles";
 	static final String DEFINITION = "mydefinitions";
 	String definition = " ", title = " ", stack = " ";
@@ -66,31 +66,47 @@ public class CardCreator extends Activity {
 	}
 	
 	public void createCard(View view) {
-		
+				
 		getText();
 						
 		if (title.isEmpty() || definition.isEmpty())
 			Toast.makeText(getApplicationContext(), "Your card contains unwritten side(s)", Toast.LENGTH_SHORT).show();
 		else {
-			if(db.matchCard(title, definition)) {
-				Toast.makeText(getApplicationContext(), "Already in!", Toast.LENGTH_SHORT).show();
-			}
-			else {
-				
-				int tdefault = 1;
-				long id = db.insertCard(tdefault,title, definition);
-				if (id != -1) {
-					
-					Toast.makeText(getApplicationContext(), "inserted!", Toast.LENGTH_SHORT).show();
-					
-					Intent intent = new Intent(this, SmartNoteActivity.class);
-					startActivity(intent);
-				}	
-				else
-					Toast.makeText(getApplicationContext(), "not inserted!", Toast.LENGTH_SHORT).show();
+			String[] stacks = splitStacks(stack);
+			insertStacks(stacks);
+			
+			long insTester[] = new long[stacks.length];
+			for(int i=0; i < stacks.length; i++) {
+				if (db.matchCard(title, definition, stacks[i])) {
+					insTester[i] = -1;
+				} else 
+					insTester[i] = db.insertCard(title, definition, stacks[i]);
 			}
 			
+			for (int i = 0; i < insTester.length; i++) {
+				if (insTester[i] == -1 && !stacks[i].equals("")) 
+					Toast.makeText(getApplicationContext(), "Not inserted in " + stacks[i],
+							500).show();
+			}
+			
+			Intent intent = new Intent(this, SmartNoteActivity.class);
+			startActivity(intent);
 		} 
+	}
+		
+	public void insertStacks(String[] stacks) {
+		for (String sName:stacks) {
+			if (!sName.equals("") && !db.matchStack(sName)) {
+				db.insertStack(sName);
+			}
+		}
+	}
+	public String[] splitStacks(String s) {
+		String[] stacks = s.split(";");
+		for (String string:stacks) {
+			string = string.trim();
+		}
+		return stacks;
 	}
 	
 	public void toStacks(View view) {
@@ -103,28 +119,6 @@ public class CardCreator extends Activity {
 		intent.putExtra("stack", stack);
 		
 		startActivity(intent);
-	}
-
-	public void onSaveInstanceState(Bundle savedInstanceState) {
-		getText();
-			
-		savedInstanceState.putString(TITLE, title);
-		savedInstanceState.putString(DEFINITION, definition);
-		super.onSaveInstanceState(savedInstanceState);
-	}
-	
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		title = savedInstanceState.getString(TITLE);
-		definition = savedInstanceState.getString(DEFINITION);
-		
-		EditText editText = (EditText)findViewById(R.id.title);
-		editText.setText(title);
-		
-		editText = (EditText)findViewById(R.id.definition);
-		editText.setText(definition);
-				
 	}
 
 	protected void onStop() {
