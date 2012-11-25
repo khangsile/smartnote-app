@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -32,23 +33,22 @@ public class MCQuiz extends Activity {
 		setContentView(R.layout.mcquiz);
 		
 		initialize();
+		
 		if (cardList.size() <= 4) {
-			Toast.makeText(getApplicationContext(),
-					"Sorry! This feature requires \nmore than 4 cards in your deck.",
-					500).show();
+			Toast.makeText(getApplicationContext(), "Sorry! This feature requires \nmore than 4 cards in your deck.",500).show();
 			finish();
+		} else {
+			toChinaCat();
+			
+			cardQueue = (Queue<CardModel>) getLastNonConfigurationInstance();
+		    if (cardQueue == null) 
+		    	cardQueue = shuffle(new ArrayList<CardModel>(cardList));
+			
+			getCard();
+			
+			answers = new ArrayList<CardModel>();
+			getChoices(new ArrayList<CardModel>(cardList));
 		}
-		
-		toChinaCat();
-		
-		cardQueue = (Queue<CardModel>) getLastNonConfigurationInstance();
-	    if (cardQueue == null) 
-	    	cardQueue = shuffle(new ArrayList<CardModel>(cardList));
-		
-		getCard();
-		
-		answers = new ArrayList<CardModel>();
-		getChoices(new ArrayList<CardModel>(cardList));
 	}
 	
 	public Object onRetainNonConfigurationInstance() {
@@ -64,6 +64,8 @@ public class MCQuiz extends Activity {
 			
 		cardList = new ArrayList<CardModel>();
 		cardList = db.getItems(stack);
+		
+		db.close();
 			
 		question = (TextView) findViewById(R.id.question);
 		
@@ -73,7 +75,6 @@ public class MCQuiz extends Activity {
 		choices[2] = (RadioButton) findViewById(R.id.c);
 		choices[3] = (RadioButton) findViewById(R.id.d);
 		
-		db.close();
 		
 	}
 	
@@ -85,6 +86,10 @@ public class MCQuiz extends Activity {
 		choices[3].setTypeface(chinacat);
 		question.setTypeface(chinacat);
 			
+	}
+	
+	public void onDestroy() {
+		super.onDestroy();
 	}
 
 	private Queue<CardModel> shuffle(List<CardModel> cardListCopy) {
