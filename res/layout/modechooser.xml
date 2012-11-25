@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffff88" >
+    
+   <RelativeLayout android:layout_width = "fill_parent"
+        android:layout_height = "wrap_content"
+        android:layout_alignParentTop ="true"
+        android:layout_centerHorizontal = "true"
+        android:background = "#5C3317" >
+        <TextView android:id = "@+id/modeChoice"
+        	android:layout_height = "wrap_content"
+        	android:layout_width = "wrap_content"
+        	android:layout_centerHorizontal = "true"
+        	android:paddingTop = "50sp"
+        	android:text = "Choose a Mode"
+        	android:textColor = "#000"
+        	android:textSize = "35sp" />
+    </RelativeLayout>
+ 
+    <Button android:id="@+id/mcQuiz"
+            android:layout_height = "wrap_content"
+            android:layout_width = "wrap_content"
+			android:layout_centerInParent = "true"
+            android:text = "Multiple Choice"
+            android:onClick="toMcQuiz" />
+    <Button android:id="@+id/memQuiz"
+        	android:layout_height = "wrap_content"
+        	android:layout_width = "wrap_content"
+        	android:layout_below = "@id/mcQuiz"
+        	android:layout_centerHorizontal = "true"
+        	android:text = "Memory Quiz"
+        	android:onClick = "toMemQuiz" />
+    <Button android:id="@+id/review"
+            android:layout_height = "wrap_content"
+            android:layout_width = "wrap_content"
+            android:layout_above = "@id/mcQuiz"
+            android:layout_centerHorizontal = "true"
+            android:text = "Review Mode"
+            android:onClick = "toReview" />    
+    
+</RelativeLayout>

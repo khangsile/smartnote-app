@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 public class InteractiveArrayAdapter extends ArrayAdapter<Model> {
 	
-	public final List<Model> list;
+	private final List<Model> list;
 	private final Activity context;
 	
 	public InteractiveArrayAdapter(Activity context, List<Model> list) {

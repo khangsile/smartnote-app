@@ -25,7 +25,7 @@ public class StacksGallery extends ListActivity {
 	
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 	    String item = (String) getListAdapter().getItem(position);
-	    Intent intent = new Intent(this, Card.class);
+	    Intent intent = new Intent(this, ModeChooser.class);
 	    intent.putExtra("stack", item);
 	    startActivity(intent);
 	  }

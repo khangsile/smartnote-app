@@ -24,7 +24,6 @@
 	android:layout_height="wrap_content"
 	android:layout_below="@id/title"
 	android:paddingTop="10dp"
-	android:background = "#ffff88"
 	android:textColor ="#000"
 	android:textSize = "20sp"
 	android:text = "@string/stackLabel" />
@@ -60,6 +59,7 @@
  	android:layout_alignParentBottom="true"
  	android:text = "@string/cardCreate" 
  	android:onClick = "createCard" />
+
  <EditText android:id="@+id/definition"
     android:hint="@string/definition"
  	android:layout_width="fill_parent"

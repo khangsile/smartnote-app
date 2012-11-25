@@ -6,12 +6,6 @@
 	<RelativeLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" 
 		android:id="@+id/top_control_bar">
-		<TextView android:id = "@+id/stackheader"
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:textSize = "50dp"
-		android:text = "The Stacks" 
-		android:background = "#888888"/>
 	</RelativeLayout>
 	<LinearLayout android:id="@+id/bottom_control_bar"
 		android:layout_width="fill_parent" 

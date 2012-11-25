@@ -12,13 +12,12 @@
  	android:layout_height="fill_parent" >
  
  		<TextView android:id="@+id/defTxt"
- 			android:paddingTop="74sp"
+ 			android:paddingTop="63sp"
  			android:layout_height="fill_parent"
  			android:layout_width="fill_parent"
  			android:text="Definitions"
- 			android:textSize = "31sp"
+ 			android:textSize = "20sp"
  			android:textColor="#000000"
- 			android:maxLines = "12"
  			android:background = "#ffff88"
  		/>
  		
@@ -27,7 +26,7 @@
  			android:layout_width="wrap_content"
  			android:layout_gravity="center"
  			android:text="Titles"
-  			android:textSize = "31sp"			
+  			android:textSize = "20sp"			
  			android:textColor="#000000"
  		/>
  	
@@ -38,7 +37,7 @@
  		android:layout_alignParentRight = "true"
  		android:layout_height = "wrap_content"
  		android:layout_width = "wrap_content"
- 		android:background = "#f5ff96"
+ 		android:background = "#ffff88"
  		android:text = "S"
  		android:textSize = "30sp"
  		android:onClick = "talk" />
@@ -47,7 +46,7 @@
   		android:layout_alignParentRight="true"
   		android:layout_height="wrap_content"
   		android:layout_width="wrap_content"
-  		android:background="#f5ff96"
+  		android:background="#ffff88"
   		android:text="Forward" 		 		
   		android:textSize = "30sp"
   		android:onClick="moveForward"
@@ -57,7 +56,7 @@
   		android:layout_alignParentLeft="true"
   		android:layout_height="wrap_content"
   		android:layout_width="wrap_content"
-  		android:background="#f5ff96"
+  		android:background="#ffff88"
   		android:text="Backward"
   		android:textSize = "30sp"	
   		android:onClick="moveBackward"
@@ -67,7 +66,7 @@
   		android:layout_centerHorizontal="true"
   		android:layout_height="wrap_content"
   		android:layout_width="wrap_content"
-  		android:background="#f5ff96"
+  		android:background="#ffff88"
   		android:text="Flip"
   		android:textSize = "30sp"	
   		android:onClick="flip"

@@ -21,6 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.smartnote.Card"/>
+        <activity android:name="com.example.smartnote.MemQuiz"/>
+        <activity android:name="com.example.smartnote.MCQuiz" />
         <activity android:name = "com.example.smartnote.StackMenu">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -35,6 +37,8 @@
    				<data android:mimeType= "text/plain" />            
             </intent-filter>
         </activity>
+        <activity android:name = "com.example.smartnote.Test"/>
+        <activity android:name = "com.example.smartnote.ModeChooser" />
         
     </application>
 </manifest>

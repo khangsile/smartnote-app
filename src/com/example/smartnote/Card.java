@@ -9,15 +9,20 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class Card extends Activity implements OnInitListener {
+public class Card extends Activity implements OnInitListener, OnGestureListener {
+	private GestureDetector gestureDetector;
 		
 	private static final String FLIP_TAB = "flipperTab";
+	private static final String LIST_POS = "listPos";
 	
 	private int MY_DATA_CHECK_CODE = 0;
 	
@@ -35,6 +40,8 @@ public class Card extends Activity implements OnInitListener {
 		
 		initialize();
 		toChinaCat();
+		
+		gestureDetector = new GestureDetector(this);
 		
 		getCard();
 	}
@@ -60,7 +67,7 @@ public class Card extends Activity implements OnInitListener {
 		backward = (Button)findViewById(R.id.backward);
 		flipHandler = (Button)findViewById(R.id.flip);
 		
-		flipper = (ViewFlipper)findViewById(R.id.flipper);
+		flipper = (ViewFlipper)findViewById(R.id.cardFlipper);
 		
 		Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -89,22 +96,28 @@ public class Card extends Activity implements OnInitListener {
 		
 	}
 	
-	public void moveForward(View view) {
-		if (cardListIndex != cardList.size()-1) 
-			cardListIndex++;
-		else 
-			Toast.makeText(getApplicationContext(), "End of the Deck", Toast.LENGTH_SHORT).show();
-
+	public void changeCard(boolean forward) {
+		if (forward) {
+			if (cardListIndex != cardList.size()-1) 
+				cardListIndex++;
+			else 
+				Toast.makeText(getApplicationContext(), "End of the Deck", Toast.LENGTH_SHORT).show();
+		} else {
+			if (cardListIndex != 0) 
+				cardListIndex--;
+			else 
+				Toast.makeText(getApplicationContext(), "Beginning of the Deck", Toast.LENGTH_SHORT).show();
+		}
+		
 		getCard();
 	}
 	
+	public void moveForward(View view) {
+		changeCard(true);
+	}
+	
 	public void moveBackward(View view) {
-		if (cardListIndex != 0) 
-			cardListIndex--;
-		else 
-			Toast.makeText(getApplicationContext(), "Beginning of the Deck", Toast.LENGTH_SHORT).show();
-		
-		getCard();
+		changeCard(false);
 	}
 	
 	public void flip(View view) {
@@ -131,6 +144,7 @@ public class Card extends Activity implements OnInitListener {
 	
 	public void onSaveInstanceState(Bundle savedInstanceState) {	
 		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());
+		savedInstanceState.putInt(LIST_POS, cardListIndex);
 		
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -138,8 +152,11 @@ public class Card extends Activity implements OnInitListener {
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		int flipperPos = savedInstanceState.getInt(FLIP_TAB);
+		cardListIndex = savedInstanceState.getInt(LIST_POS);
 								
 		flipper.setDisplayedChild(flipperPos);
+		
+		getCard();
 	}
 	
 	public void onDestroy() {
@@ -162,6 +179,7 @@ public class Card extends Activity implements OnInitListener {
 	        }
     }
 	
+	
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
 		if (status == TextToSpeech.SUCCESS) {
@@ -172,6 +190,66 @@ public class Card extends Activity implements OnInitListener {
 		}
 	}
 
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public boolean onFling(MotionEvent start, MotionEvent finish, float velocityX,
+			float velocityY) {
+		
+		float xBndUpr = start.getRawX() + 75;
+		float xBndLwr = start.getRawX() - 75;
+		float yBndUpr = start.getRawY() + 100;
+		float yBndLwr = start.getRawY() - 100;
+		
+		if (finish.getRawY() > yBndLwr && finish.getRawY() < yBndUpr) {
+			if (finish.getRawX() > xBndUpr)
+				 changeCard(false);
+			 else if (finish.getRawX() < xBndLwr)
+				 changeCard(true);
+		} else if (finish.getRawY() < start.getRawY() + 150)
+			 flipper.showNext();
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		flipper.showNext();
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	public boolean onTouchEvent(MotionEvent me) {
+		return gestureDetector.onTouchEvent(me);
+		}
 }
 
 

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" 
+    android:background = "#ffff88">
+    
+    <Button android:id = "@+id/bAnswer"
+		android:layout_width = "fill_parent"
+		android:layout_height = "wrap_content"
+		android:layout_alignParentBottom ="true"
+		android:text = "Answer"
+		android:textSize = "15sp" 
+		android:onClick = "mcAnswer"/>
+    
+    <RadioGroup android:id = "@+id/rGroup"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_above = "@id/bAnswer"
+    	android:orientation="vertical">
+    	<RadioButton android:id="@+id/a"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="@id/a"
+    	    android:textColor = "#000"
+    	    android:onClick="onRadioButtonClicked"/>
+    	<RadioButton android:id="@+id/b"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:text="@id/b"
+        	android:textColor = "#000"
+        	android:onClick="onRadioButtonClicked"/>
+    	<RadioButton android:id="@+id/c" 
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:text="@id/c"
+        	android:textColor = "#000"
+        	android:onClick="onRadioButtonClicked"/>
+    	<RadioButton android:id="@+id/d"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:text="@id/c"
+        	android:textColor = "#000"
+        	android:onClick="onRadioButtonClicked"/>
+	</RadioGroup>
+    
+    
+    <TextView android:id="@+id/question"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above = "@id/rGroup"
+        android:layout_alignParentTop="true"
+        android:textSize = "15sp"
+        android:textColor ="#000" />
+    
+        
+</RelativeLayout>

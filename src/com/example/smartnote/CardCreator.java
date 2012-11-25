@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -124,6 +125,28 @@ public class CardCreator extends Activity {
 
 	protected void onStop() {
 		super.onStop();
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	        Intent intent = new Intent(this, SmartNoteActivity.class);
+	        startActivity(intent);
+	        return true;
+	    }
+	    if ((keyCode == KeyEvent.KEYCODE_SEARCH)) {
+	    	getText();
+	    	
+	    	Intent intent = new Intent(this, StackMenu.class);
+	    	intent.putExtra("title", title);
+			intent.putExtra("definition", definition);
+			intent.putExtra("stack", stack);
+			
+	    	startActivity(intent);
+	    	return true;
+	    }
+	    
+	    return super.onKeyDown(keyCode, event); 
+
 	}
 	
 	private void getText() {
