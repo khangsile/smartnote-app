@@ -4,7 +4,7 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="#ffff88">
+  android:background="#f5ff96">
   
    <ViewFlipper 
     android:id = "@+id/cardFlipper"
@@ -12,14 +12,14 @@
  	android:layout_height="fill_parent" >
  
  		<TextView android:id="@+id/defTxt"
- 			android:paddingTop="74sp"
+ 			android:paddingTop="50sp"
  			android:layout_height="fill_parent"
  			android:layout_width="fill_parent"
  			android:text="Definitions"
- 			android:textSize = "31sp"
+ 			android:textSize = "20sp"
  			android:textColor="#000000"
- 			android:maxLines = "12"
- 			android:background = "#ffff88"
+ 			android:maxLines = "20"
+ 			android:background = "#f5ff96"
  		/>
  		
  		<TextView android:id="@+id/titleTxt"
@@ -33,45 +33,52 @@
  	
  	</ViewFlipper>
  
- 	<Button android:id = "@+id/speak"
- 		android:layout_alignParentTop = "true"
- 		android:layout_alignParentRight = "true"
- 		android:layout_height = "wrap_content"
- 		android:layout_width = "wrap_content"
- 		android:background = "#f5ff96"
- 		android:text = "S"
- 		android:textSize = "30sp"
- 		android:onClick = "talk" />
-  	<Button android:id = "@+id/forward"
-  		android:layout_alignParentBottom="true"
-  		android:layout_alignParentRight="true"
-  		android:layout_height="wrap_content"
-  		android:layout_width="wrap_content"
-  		android:background="#f5ff96"
-  		android:text="Forward" 		 		
-  		android:textSize = "30sp"
-  		android:onClick="moveForward"
-  	/>
-  	<Button android:id = "@+id/backward"
-  		android:layout_alignParentBottom="true"
-  		android:layout_alignParentLeft="true"
-  		android:layout_height="wrap_content"
-  		android:layout_width="wrap_content"
-  		android:background="#f5ff96"
-  		android:text="Backward"
-  		android:textSize = "30sp"	
-  		android:onClick="moveBackward"
-  	/>
-  	<Button android:id = "@+id/flip"
-  		android:layout_alignParentBottom="true"
-  		android:layout_centerHorizontal="true"
-  		android:layout_height="wrap_content"
-  		android:layout_width="wrap_content"
-  		android:background="#f5ff96"
-  		android:text="Flip"
-  		android:textSize = "30sp"	
-  		android:onClick="flip"
-  	/> 
+	<FrameLayout    android:layout_width="wrap_content" 
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       android:layout_alignParentRight="true"
+       android:background="#f5ff96">           
+        <Button android:id="@+id/forward" 
+            android:layout_width="50dp"         
+            android:layout_height="50dp"
+            android:background = "#f5ff96" 
+            android:onClick="moveForward"/>
+        <ImageView  android:layout_width="45dp"         
+            android:layout_height="45dp" 
+            android:scaleType="fitXY" 
+            android:src="@drawable/forwardarrow" />
+    </FrameLayout> 
+	<FrameLayout android:layout_width="wrap_content" 
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       android:layout_alignParentLeft="true"
+       android:layout_marginLeft = "5dp"
+       android:background="#f5ff96">           
+        <Button android:id="@+id/backward" 
+            android:layout_width="50dp"         
+            android:layout_height="50dp"
+            android:background = "#f5ff96" 
+            android:onClick="moveBackward"/>
+        <ImageView  android:layout_width="45dp"         
+            android:layout_height="45dp" 
+            android:scaleType="fitXY" 
+            android:src="@drawable/backarrow" />
+    </FrameLayout> 
+	<FrameLayout android:layout_width="wrap_content" 
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       android:layout_centerHorizontal="true"
+       android:background="#f5ff96">           
+        <Button android:id="@+id/speak" 
+            android:layout_width="50dp"         
+            android:layout_height="50dp"
+            android:background = "#f5ff96" 
+            android:onClick="talk"/>
+        <ImageView  android:layout_width="45dp"         
+            android:layout_height="45dp" 
+            android:scaleType="fitXY" 
+            android:src="@drawable/microphone" />
+    </FrameLayout> 
   
 </RelativeLayout>
 

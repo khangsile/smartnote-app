@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+/*Choose your modes in this activity. Allows you to choose between review, multiple
+ * choice, memory (fill-in), and also allows you to manage your stack and look
+ * at the stats.
+ */
 public class ModeChooser extends Activity {
 	
 	private Button bMemQuiz, bReview, bMcQuiz;

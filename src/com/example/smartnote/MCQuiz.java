@@ -7,13 +7,9 @@ import java.util.Queue;
 import java.util.Random;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -88,10 +84,10 @@ public class MCQuiz extends Activity {
 			
 	}
 	
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
+	/*Shuffles the cards and outputs an order for the cards to be quizzed in through
+	 * the use of a queue. This means that you cannot move backwards in the list
+	 * and the queue is fixed. 
+	 */
 	private Queue<CardModel> shuffle(List<CardModel> cardListCopy) {
 		Queue<CardModel> cardQueue = new LinkedList<CardModel>();
 		
@@ -110,6 +106,7 @@ public class MCQuiz extends Activity {
 		question.setText(definition);
 	}
 	
+	/*Gets the choices by randomly selecting four cards from the list*/
 	private void getChoices(List<CardModel> cardListCopy) {		
 		answers.add(cardQueue.peek());
 		

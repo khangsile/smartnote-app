@@ -164,6 +164,8 @@ public class SmartDBAdapter {
     	
     	int defIndex = cursor.getColumnIndex(DEFINITION);
 		int titleIndex = cursor.getColumnIndex(TITLE);
+		int idIndex = cursor.getColumnIndex(ROW_ID);
+		int stackIndex = cursor.getColumnIndex(STACK);
 				
 		cursor.moveToFirst();
 			
@@ -173,13 +175,13 @@ public class SmartDBAdapter {
 			
 			String title = cursor.getString(titleIndex);
 			String definition = cursor.getString(defIndex);
-			cardList.add(new CardModel(title, definition));
+			int id = cursor.getInt(idIndex);
+			int stackID = cursor.getInt(stackIndex);
+			cardList.add(new CardModel(title, definition, id, stackID));
 			
 			cursor.moveToNext();
 		}
-		
 		return cardList;
-		
     }
     
     public List<Model> getStacks() {
@@ -199,5 +201,22 @@ public class SmartDBAdapter {
 		}
 		
 		return list;
+    }
+    
+    public int updateCard(CardModel card) {
+    	ContentValues cv=new ContentValues();
+    	cv.put(DEFINITION, card.getDef());
+    	cv.put(STACK, card.getStack());
+    	cv.put(TITLE, card.getTitle());
+    	return db.update(CARD_TABLE, cv, ROW_ID+"=?", 
+    			new String []{String.valueOf(card.getStack())});   
+    }
+    
+    public int deleteCard(CardModel card) {
+    	return db.delete(CARD_TABLE, ROW_ID+"=?", new String [] {String.valueOf(card.getId())});
+    }
+    
+    public int deleteStack(String stackName) {
+    	return db.delete(STACK_TABLE, STACK_NAME+"=?", new String [] {stackName});
     }
 }

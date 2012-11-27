@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+ 	<item android:id = "@+id/menu_shuffle"
+	    android:icon = "@drawable/ic_menu_shuffle"
+	    android:title = "Shuffle" />
+	<item android:id = "@+id/menu_alphabetize"
+	    android:icon = "@drawable/ic_menu_mark"
+	    android:title = "Alphabetize" /> 
+	<item android:id = "@+id/menu_edit"
+	    android:icon = "@drawable/ic_menu_edit"
+	    android:title = "Edit" />
+	<item android:id = "@+id/menu_delete"  
+	    android:icon = "@drawable/ic_menu_delete"
+	    android:title = "Delete" />
+	<item android:id = "@+id/menu_add"
+	    android:icon = "@drawable/ic_menu_add"
+	    android:title = "Copy" />
+	<item android:id = "@+id/menu_search"
+	    android:icon = "@drawable/ic_menu_search"
+	    android:title = "Search"/>
+</menu>

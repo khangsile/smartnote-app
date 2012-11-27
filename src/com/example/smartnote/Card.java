@@ -1,7 +1,10 @@
 package com.example.smartnote;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +14,9 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -23,11 +29,11 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 	private static final String FLIP_TAB = "flipperTab";
 	private static final String LIST_POS = "listPos";
+	private String stack;
 	
 	private int MY_DATA_CHECK_CODE = 0;
 	
 	private TextView defTxt, titleTxt;
-	private Button flipHandler, forward, backward, speak;
 	private ViewFlipper flipper;
 	private TextToSpeech myTTS;
 	
@@ -46,11 +52,47 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		getCard();
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.cardmenu, menu);
+	    return true;
+	  }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.menu_search:
+	      Toast.makeText(this, "Search", Toast.LENGTH_SHORT)
+	          .show();
+	      break;
+	    case R.id.menu_delete:
+	      delete();
+	      break;
+	    case R.id.menu_edit:
+	    	Toast.makeText(this, "Edit", Toast.LENGTH_SHORT)
+	    		.show();
+	      break;
+	    case R.id.menu_add:
+	    	Toast.makeText(this, "Copy", Toast.LENGTH_SHORT).show();
+	      break;
+	    case R.id.menu_shuffle:
+	    	shuffle();
+	      break;
+	    case R.id.menu_alphabetize:
+	    	alphabetize();
+	      break;
+	    default:
+	      break;
+	    }
+
+	    return true;
+	  }
 		
 	private void initialize() {
 		
 		Bundle extras = getIntent().getExtras();
-		String stack = extras.getString("stack");
+		stack = extras.getString("stack");
 		
 		SmartDBAdapter db = new SmartDBAdapter(this);
 		db.open();
@@ -61,12 +103,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 		titleTxt = (TextView)findViewById(R.id.titleTxt);
 		defTxt = (TextView)findViewById(R.id.defTxt);
-		
-		speak = (Button)findViewById(R.id.speak);		
-	    forward = (Button)findViewById(R.id.forward);
-		backward = (Button)findViewById(R.id.backward);
-		flipHandler = (Button)findViewById(R.id.flip);
-		
+				
 		flipper = (ViewFlipper)findViewById(R.id.cardFlipper);
 		
 		Intent checkTTSIntent = new Intent();
@@ -89,27 +126,32 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 		titleTxt.setTypeface(chinacat);
 		defTxt.setTypeface(chinacat);
-		forward.setTypeface(chinacat);
-		backward.setTypeface(chinacat);
-		flipHandler.setTypeface(chinacat);
-		speak.setTypeface(chinacat);
-		
 	}
 	
-	public void changeCard(boolean forward) {
+	/*Instead of creating two long functions, created a switch card function. 
+	 * True to go forward, false to go backwards. Has bounds checking also.
+	 */
+	public boolean changeCard(boolean forward) {
 		if (forward) {
-			if (cardListIndex != cardList.size()-1) 
+			if (cardListIndex < cardList.size()-1) {
 				cardListIndex++;
-			else 
+			}
+			else {
 				Toast.makeText(getApplicationContext(), "End of the Deck", Toast.LENGTH_SHORT).show();
+				return false;
+			}
 		} else {
-			if (cardListIndex != 0) 
+			if (cardListIndex > 0) {
 				cardListIndex--;
-			else 
+			}
+			else {
 				Toast.makeText(getApplicationContext(), "Beginning of the Deck", Toast.LENGTH_SHORT).show();
+				return false;
+			}
 		}
 		
 		getCard();
+		return true;
 	}
 	
 	public void moveForward(View view) {
@@ -120,10 +162,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		changeCard(false);
 	}
 	
-	public void flip(View view) {
-		flipper.showNext();
-	}
-	
+	/*For TTS*/
 	public void talk(View view) {
 		int flipperView = flipper.getDisplayedChild();
 		int flipperTitle = flipper.indexOfChild(titleTxt);
@@ -142,6 +181,74 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		myTTS.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
 	}
 	
+	/*Basic shuffle which generates two random numbers that signify deck positions and switches them.
+	 * Takes O(n) time because the shuffle lasts 4n long in order to make adequate switching
+	 * of cards.
+	 */
+	private void shuffle() {
+		Random rand1 = new Random();
+		
+		for (int i=0; i<cardList.size()*4; i++) {
+			int index1 = rand1.nextInt(cardList.size());
+			CardModel temp = new CardModel(cardList.get(index1));
+			int index2 = rand1.nextInt(cardList.size());
+			cardList.get(index1).copy(cardList.get(index2));
+			cardList.get(index2).copy(temp);
+		}
+		cardListIndex = 0;
+		getCard();
+	}
+	
+	/*Deletes the current card. If this is the last card in the stack, then the 
+	 * stack is also deleted (because it is empty after this deletion).
+	 */
+	private void delete() {
+		
+		SmartDBAdapter db = new SmartDBAdapter(this);
+		db.open();
+		
+		int success = db.deleteCard(cardList.get(cardListIndex));
+		Toast.makeText(this, success + "", 500).show();
+		
+		if(cardList.size() <= 1) {
+			int succes = db.deleteStack(stack);
+			Toast.makeText(this, succes + "", 500).show();
+			Intent intent = new Intent(this, StacksGallery.class);
+			startActivity(intent);
+		}
+		else {
+			cardList.remove(cardListIndex);
+			if (changeCard(true)) {
+				getCard();
+			} else {
+				changeCard(false);
+				getCard();
+			}
+		}
+		
+		db.close();
+		
+	}
+	
+	/*Sorts the cards alphabetically based on the card's titles, and then resets 
+	 * the position back to the beginning. 
+	 */
+	private void alphabetize() {
+		Collections.sort(cardList, new CustomComparator());
+		cardListIndex = 0;
+	}
+	 /*CustomComparator used to compare cards based on their titles*/
+	public class CustomComparator implements Comparator<CardModel> {
+
+		@Override
+		public int compare(CardModel lhs, CardModel rhs) {
+			// TODO Auto-generated method stub
+			return lhs.getTitle().compareTo(rhs.getTitle());
+		}
+		
+	}
+	
+	/*Saves the position and view of the screen when the screen changes axis*/
 	public void onSaveInstanceState(Bundle savedInstanceState) {	
 		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());
 		savedInstanceState.putInt(LIST_POS, cardListIndex);
@@ -158,11 +265,6 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 		getCard();
 	}
-	
-	public void onDestroy() {
-		super.onDestroy();
-	}
-	
 		
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 			super.onActivityResult(requestCode, resultCode, data);
@@ -178,7 +280,6 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	            }
 	        }
     }
-	
 	
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
@@ -197,15 +298,20 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		return false;
 	}
 
-
+    /*Used for touch motion. Move left to go forward, right to go backward, up to
+     * flip the card. Included buffers in there so that there is room for user error
+     * when making a swipe. 
+     * (non-Javadoc)
+     * @see android.view.GestureDetector.OnGestureListener#onFling(android.view.MotionEvent, android.view.MotionEvent, float, float)
+     */
 	@Override
 	public boolean onFling(MotionEvent start, MotionEvent finish, float velocityX,
 			float velocityY) {
 		
 		float xBndUpr = start.getRawX() + 75;
 		float xBndLwr = start.getRawX() - 75;
-		float yBndUpr = start.getRawY() + 100;
-		float yBndLwr = start.getRawY() - 100;
+		float yBndUpr = start.getRawY() + 125;
+		float yBndLwr = start.getRawY() - 125;
 		
 		if (finish.getRawY() > yBndLwr && finish.getRawY() < yBndUpr) {
 			if (finish.getRawX() > xBndUpr)
@@ -217,7 +323,6 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		// TODO Auto-generated method stub
 		return true;
 	}
-
 
 	@Override
 	public void onLongPress(MotionEvent e) {
@@ -240,6 +345,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 	}
 
+	/*Flips the card*/
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		flipper.showNext();
