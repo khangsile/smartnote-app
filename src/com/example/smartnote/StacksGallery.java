@@ -48,14 +48,12 @@ public class StacksGallery extends ListActivity {
 		return stringList;
 	}
 	
-	 public boolean onKeyDown(int keyCode, KeyEvent event) {
-		    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-		    	Intent intent = new Intent(Intent.ACTION_MAIN);
-		        intent.addCategory(Intent.CATEGORY_HOME);
-		        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		        startActivity(intent);
-		        return true;
-		    }
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	        Intent intent = new Intent(this, SmartNoteActivity.class);
+	        startActivity(intent);
+	        return true;
+	    }
 	    return super.onKeyDown(keyCode, event);
 	    }
 	

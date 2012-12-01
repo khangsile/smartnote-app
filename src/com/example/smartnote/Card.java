@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -19,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -31,7 +31,8 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	private static final String LIST_POS = "listPos";
 	private String stack;
 	
-	private int MY_DATA_CHECK_CODE = 0;
+	private int MY_TTS_DATA_CHECK_CODE = 0;
+	private int MY_STACK_DATA_CHECK_CODE = 1;
 	
 	private TextView defTxt, titleTxt;
 	private ViewFlipper flipper;
@@ -74,7 +75,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	    		.show();
 	      break;
 	    case R.id.menu_add:
-	    	Toast.makeText(this, "Copy", Toast.LENGTH_SHORT).show();
+	    	copy();
 	      break;
 	    case R.id.menu_shuffle:
 	    	shuffle();
@@ -108,7 +109,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 		Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+        startActivityForResult(checkTTSIntent, MY_TTS_DATA_CHECK_CODE);
 	}
 	
 	private void getCard() {
@@ -236,14 +237,26 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	private void alphabetize() {
 		Collections.sort(cardList, new CustomComparator());
 		cardListIndex = 0;
+		
+		getCard();
 	}
 	 /*CustomComparator used to compare cards based on their titles*/
+	
+	private void copy() {
+		Intent intent = new Intent(this, StackMenu.class);
+		intent.putExtra("stack", stack);
+		
+		startActivityForResult(intent, MY_STACK_DATA_CHECK_CODE);
+	}
+	
 	public class CustomComparator implements Comparator<CardModel> {
 
+		@SuppressLint("DefaultLocale")
 		@Override
 		public int compare(CardModel lhs, CardModel rhs) {
 			// TODO Auto-generated method stub
-			return lhs.getTitle().compareTo(rhs.getTitle());
+			return lhs.getTitle().toLowerCase()
+					.compareTo(rhs.getTitle().toLowerCase());
 		}
 		
 	}
@@ -268,7 +281,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 			super.onActivityResult(requestCode, resultCode, data);
-	        if (requestCode == MY_DATA_CHECK_CODE) {
+	        if (requestCode == MY_TTS_DATA_CHECK_CODE) {
 	            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 	                //the user has the necessary data - create the TTS
 	            myTTS = new TextToSpeech(this, this);
@@ -279,7 +292,39 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	                startActivity(installTTSIntent);
 	            }
 	        }
+	        if(requestCode == MY_STACK_DATA_CHECK_CODE && resultCode == RESULT_OK) {
+	        	SmartDBAdapter db = new SmartDBAdapter(this);
+	        	db.open();
+	        	
+	        	String title = titleTxt.getText().toString();
+	        	String definition = defTxt.getText().toString();
+	        	String copyStacks = data.getStringExtra("stack");
+	        	String[] stacks = splitStacks(copyStacks);
+				
+				long insTester[] = new long[stacks.length];
+				for(int i=0; i < stacks.length; i++) {
+					if (stacks[i].equals("")) {
+					}else if (db.matchCard(title, definition, stacks[i])) {
+						insTester[i] = -1;
+					} else 
+						insTester[i] = db.insertCard(title, definition, stacks[i]);
+				}
+				
+				for (int i = 1; i < insTester.length; i++) {
+					if (insTester[i] == -1 && !stacks[i].equals("")) 
+						Toast.makeText(getApplicationContext(), "Not inserted in " + stacks[i],
+								500).show();
+				}	  
+	        }
     }
+	
+	private String[] splitStacks(String s) {
+		String[] stacks = s.split(";");
+		for (String string:stacks) {
+			string = string.trim();
+		}
+		return stacks;
+	}
 	
 	public void onInit(int status) {
 		// TODO Auto-generated method stub

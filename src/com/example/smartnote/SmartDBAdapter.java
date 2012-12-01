@@ -20,16 +20,29 @@ public class SmartDBAdapter {
 	public static final String STACK_ID = "stackID";
 	public static final String STACK_NAME = "stackName";
 	public static final String ROW_ID = "_id";
+	public static final String HITS = "hits";
+	public static final String ATTEMPTS = "attempts";
+	public static final String MEM_STATS_TABLE = "MemStats";
+	public static final String MC_STATS_TABLE = "McStats";
 	
 	public static final String DB_NAME = "db_notecard";
-	public static final int DB_VER = 5;
+	public static final int DB_VER = 8;
 	
 	private static final String CARD_CREATE = "CREATE TABLE Cards (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-			"title TEXT NOT NULL, definition TEXT NOT NULL, " + "deck INTEGER NOT NULL " +
+			"title TEXT NOT NULL, definition TEXT NOT NULL, " + "hits INTEGER NOT NULL, " + 
+			"attempts INTEGER NOT NULL, " + "deck INTEGER NOT NULL " + 
 			",FOREIGN KEY (deck) REFERENCES " + STACK_TABLE + " (stackID));";
 	
 	private static final String STACK_CREATE = "Create TABLE " + STACK_TABLE + " (stackID INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			STACK_NAME + " TEXT NOT NULL);";
+	
+	private static final String MC_STATS_CREATE = "CREATE TABLE McStats (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+			"hits INTEGER NOT NULL, attempts INTEGER NOT NULL, deck INTEGER NOT NULL , FOREIGN KEY " +
+			"(deck) REFERENCES " + STACK_TABLE + " (stackID));";
+	
+	private static final String MEM_STATS_CREATE = "CREATE TABLE MemStats (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+			"hits INTEGER NOT NULL, attempts INTEGER NOT NULL, deck INTEGER NOT NULL , FOREIGN KEY " +
+			"(deck) REFERENCES " + STACK_TABLE + " (stackID));";
 	
 	private static final String VIEW_CARDS = "viewCards";
 	
@@ -42,6 +55,8 @@ public class SmartDBAdapter {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(STACK_CREATE);
 			db.execSQL(CARD_CREATE);
+			db.execSQL(MEM_STATS_CREATE);
+			db.execSQL(MC_STATS_CREATE);
 			
 			db.execSQL("CREATE TRIGGER fk_empstack_stackid " +
 				    " BEFORE INSERT "+
@@ -53,10 +68,34 @@ public class SmartDBAdapter {
 				    " THEN RAISE (ABORT,'Foreign Key Violation') END;"+
 				    "  END;");
 			
+			db.execSQL("CREATE TRIGGER fk_empstack_stackid_mc " +
+				    " BEFORE INSERT "+
+				    " ON "+MC_STATS_TABLE+
+				    
+				    " FOR EACH ROW BEGIN"+
+				    " SELECT CASE WHEN ((SELECT "+STACK_ID+" FROM "+STACK_TABLE+
+				    " WHERE "+STACK_ID+"=new."+STACK+" ) IS NULL)"+
+				    " THEN RAISE (ABORT,'Foreign Key Violation') END;"+
+				    "  END;");
+			
+			db.execSQL("CREATE TRIGGER fk_empstack_stackid_mem " +
+				    " BEFORE INSERT "+
+				    " ON "+MEM_STATS_TABLE+
+				    
+				    " FOR EACH ROW BEGIN"+
+				    " SELECT CASE WHEN ((SELECT "+STACK_ID+" FROM "+STACK_TABLE+
+				    " WHERE "+STACK_ID+"=new."+STACK+" ) IS NULL)"+
+				    " THEN RAISE (ABORT,'Foreign Key Violation') END;"+
+				    "  END;");
+
+
+			
 			db.execSQL("CREATE VIEW "+VIEW_CARDS+
 				    " AS SELECT "+CARD_TABLE+"."+ROW_ID+" AS _id,"+
 				    " "+CARD_TABLE+"."+TITLE+","+
 				    " "+CARD_TABLE+"."+DEFINITION+","+
+				    " "+CARD_TABLE+"."+HITS+","+
+				    " "+CARD_TABLE+"."+ATTEMPTS+","+
 				    " "+STACK_TABLE+"."+STACK_NAME+""+
 				    " FROM "+CARD_TABLE+" JOIN "+STACK_TABLE+
 				    " ON "+CARD_TABLE+"."+STACK+" ="+STACK_TABLE+"."+STACK_ID);	
@@ -106,6 +145,8 @@ public class SmartDBAdapter {
     	values.put(STACK, stackID);
     	values.put(TITLE, title);
     	values.put(DEFINITION, definition);
+    	values.put(HITS, 0);
+    	values.put(ATTEMPTS, 0);
     	return db.insert(CARD_TABLE, null, values);
     }
     
@@ -158,7 +199,7 @@ public class SmartDBAdapter {
     			null, null, null, null); 
     	} else {
     		int stackID = getStackID(stack);
-    		cursor = db.query("Cards", new String[] { ROW_ID, TITLE, DEFINITION, STACK}, 
+    		cursor = db.query("Cards", new String[] { ROW_ID, TITLE, DEFINITION, HITS, ATTEMPTS, STACK}, 
     				STACK+"=?", new String[] {String.valueOf(stackID)}, null, null, null);
     	}
     	
@@ -166,6 +207,8 @@ public class SmartDBAdapter {
 		int titleIndex = cursor.getColumnIndex(TITLE);
 		int idIndex = cursor.getColumnIndex(ROW_ID);
 		int stackIndex = cursor.getColumnIndex(STACK);
+		int hitIndex = cursor.getColumnIndex(HITS);
+		int attIndex = cursor.getColumnIndex(ATTEMPTS);
 				
 		cursor.moveToFirst();
 			
@@ -177,7 +220,9 @@ public class SmartDBAdapter {
 			String definition = cursor.getString(defIndex);
 			int id = cursor.getInt(idIndex);
 			int stackID = cursor.getInt(stackIndex);
-			cardList.add(new CardModel(title, definition, id, stackID));
+			int hits = cursor.getInt(hitIndex);
+			int att = cursor.getInt(attIndex);
+			cardList.add(new CardModel(title, definition, id, stackID, hits, att));
 			
 			cursor.moveToNext();
 		}
@@ -203,13 +248,53 @@ public class SmartDBAdapter {
 		return list;
     }
     
+    public List<Quiz> getMemQuiz() {
+    	Cursor cursor = db.query(MEM_STATS_TABLE, new String[] {ROW_ID, HITS, ATTEMPTS}, null,
+    			null, null, null, null);
+    	
+    	int hitIndex = cursor.getColumnIndex(HITS);
+    	int attIndex = cursor.getColumnIndex(ATTEMPTS);
+    	
+    	List<Quiz> list = new ArrayList<Quiz>();
+    	
+    	while(!cursor.isAfterLast()) {
+    		int hits = cursor.getInt(hitIndex);
+    		int atts = cursor.getInt(attIndex);
+    		
+    		list.add(new Quiz(hits, atts));
+    	}
+    	
+    	return list;
+    }
+    
+    public List<Quiz> getMcQuiz() {
+    	Cursor cursor = db.query(MC_STATS_TABLE, new String[] {ROW_ID, HITS, ATTEMPTS}, null,
+    			null, null, null, null);
+    	
+    	int hitIndex = cursor.getColumnIndex(HITS);
+    	int attIndex = cursor.getColumnIndex(ATTEMPTS);
+    	
+    	List<Quiz> list = new ArrayList<Quiz>();
+    	
+    	while(!cursor.isAfterLast()) {
+    		int hits = cursor.getInt(hitIndex);
+    		int atts = cursor.getInt(attIndex);
+    		
+    		list.add(new Quiz(hits, atts));
+    	}
+    	
+    	return list;
+    }
+    
     public int updateCard(CardModel card) {
     	ContentValues cv=new ContentValues();
     	cv.put(DEFINITION, card.getDef());
     	cv.put(STACK, card.getStack());
     	cv.put(TITLE, card.getTitle());
+    	cv.put(HITS, card.getHits());
+    	cv.put(ATTEMPTS, card.getAttempts());
     	return db.update(CARD_TABLE, cv, ROW_ID+"=?", 
-    			new String []{String.valueOf(card.getStack())});   
+    			new String []{String.valueOf(card.getId())});   
     }
     
     public int deleteCard(CardModel card) {
@@ -219,4 +304,25 @@ public class SmartDBAdapter {
     public int deleteStack(String stackName) {
     	return db.delete(STACK_TABLE, STACK_NAME+"=?", new String [] {stackName});
     }
+    
+    public long insertMCTest(int hits, int attempts, String stack) {
+    	int stackID = getStackID(stack);
+    	
+    	ContentValues cv = new ContentValues();
+    	cv.put(HITS, hits);
+    	cv.put(ATTEMPTS, attempts);
+    	cv.put(STACK, stackID);
+    	return db.insert(MC_STATS_TABLE, null, cv);
+    }
+    
+    public long insertMemTest(int hits, int attempts, String stack) {
+    	int stackID = getStackID(stack);
+    	
+    	ContentValues cv = new ContentValues();
+    	cv.put(HITS, hits);
+    	cv.put(ATTEMPTS, attempts);
+    	cv.put(STACK, stackID);
+    	return db.insert(MEM_STATS_TABLE, null, cv);
+    }
+
 }

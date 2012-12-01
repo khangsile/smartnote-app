@@ -15,7 +15,7 @@ public class StackMenu extends ListActivity {
 	
 	SmartDBAdapter db;
 	
-	private String stack, definition, title;
+	private String stack;
 	
 	InteractiveArrayAdapter adapter;
 	
@@ -31,15 +31,11 @@ public class StackMenu extends ListActivity {
 		if (extras != null) {
 			try {
 				stack = extras.getString("stack");
-				definition = extras.getString("definition");
-				title = extras.getString("title");	
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			stack = "";
-			definition = "";
-			title = "";
 		}
 		
 		Typeface chinacat = Typeface.createFromAsset(getAssets(), "fonts/DroidSans-Bold.ttf");
@@ -81,13 +77,9 @@ public class StackMenu extends ListActivity {
 		return list;
 	}
 	
-	public void cancel(View view) {
-		Intent intent = new Intent(this, CardCreator.class);
-		intent.putExtra("title", title);
-		intent.putExtra("definition", definition);
-		intent.putExtra("stack", stack);
-		
-		startActivity(intent);
+	public void cancel(View view) {		
+		setResult(RESULT_CANCELED);
+		finish();
 	}
 	
 	public void addStacks(View view) {
@@ -103,13 +95,11 @@ public class StackMenu extends ListActivity {
 			}
 		}
 		
-		Intent intent = new Intent(this, CardCreator.class);
-		intent.putExtra("title", title);
-		intent.putExtra("definition", definition);
+		Intent intent = getIntent();
 		intent.putExtra("stack", stack);
 		
-		startActivity(intent);
-		
+		setResult(RESULT_OK,intent);
+		finish();
 	}
 	
 	public void modifyStack() {

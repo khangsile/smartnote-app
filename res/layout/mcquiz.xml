@@ -49,6 +49,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above = "@id/rGroup"
+        android:layout_marginTop = "35sp"
         android:layout_alignParentTop="true"
         android:textSize = "15sp"
         android:textColor ="#000" />

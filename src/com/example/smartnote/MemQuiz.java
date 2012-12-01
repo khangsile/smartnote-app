@@ -9,6 +9,8 @@ import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -29,10 +31,13 @@ public class MemQuiz extends Activity implements OnInitListener {
 	private EditText etAnswer;
 	private Button speak, answer;
 	private TextToSpeech myTTS;
+	private int correct=0, atts=0;
+	private String stack;
 	
 	private List<CardModel> cardList;
 	private Queue<CardModel> cardQueue;
 
+	@SuppressWarnings("unchecked")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.memquiz);
@@ -54,7 +59,7 @@ public class MemQuiz extends Activity implements OnInitListener {
 	private void initialize() {
 		
 		Bundle extras = getIntent().getExtras();
-		String stack = extras.getString("stack");
+		stack = extras.getString("stack");
 		
 		SmartDBAdapter db = new SmartDBAdapter(this);
 		db.open();
@@ -99,6 +104,24 @@ public class MemQuiz extends Activity implements OnInitListener {
 		
 	}
 
+    private void update(boolean isCorrect) {
+    	if (isCorrect) {
+    		cardQueue.peek().correct();
+    		correct++;
+    		atts++;
+    	} else {
+    		cardQueue.peek().wrong();
+    		atts++;
+    	}
+    	
+    	SmartDBAdapter db = new SmartDBAdapter(this);
+    	db.open();
+    	
+    	db.updateCard(cardQueue.peek());
+    	
+    	db.close();
+    }
+	
 	private void getCard() {
 		
 		String definition = cardQueue.peek().getDef();
@@ -118,13 +141,30 @@ public class MemQuiz extends Activity implements OnInitListener {
 		
 		if (cardQueue.size() > 1) {
 			if (userAnswer.equals(modAnswer)) {
-				Toast.makeText(getApplicationContext(), "Correct!", 500).show();
+				Toast.makeText(getApplicationContext(), cardQueue.peek().getHits() + "/" + cardQueue.peek().getAttempts(), 500).show();
+				update(true);
 				cardQueue.remove();
 			} else {
 				Toast.makeText(getApplicationContext(), "Answer is " + rAnswer, 500).show();
+				update(false);
 				cardQueue.offer(cardQueue.remove());
 				} 
 			} else {
+				if (userAnswer.equals(modAnswer)) {
+					correct++;
+					atts++;
+					update(true);
+				}
+				else {
+					atts++;
+					update(false);
+				}
+				
+				SmartDBAdapter db = new SmartDBAdapter(this);
+				db.open();
+				
+				db.insertMemTest(correct, atts, stack);
+				
 				finish();
 			}
 		etAnswer.setText("");
@@ -180,6 +220,23 @@ public class MemQuiz extends Activity implements OnInitListener {
 		} else {
 			Toast.makeText(getApplicationContext(), "Sorry...Text To Speech Error", Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	public void onBackPressed() {
+		new AlertDialog.Builder(this)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("Closing Activity")
+        .setMessage("Are you sure you want to close this activity? " +
+        		"The current statistics for this quiz will be lost!")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            finish();    
+        }
+
+        })
+    	.setNegativeButton("No", null)
+    	.show();
 	}
 
 }

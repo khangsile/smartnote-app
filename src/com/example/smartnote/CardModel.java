@@ -4,13 +4,15 @@ public class CardModel {
 	
 	private String title;
 	private String definition;
-	private int id, stack;
+	private int id, stack, hits, attempts;
 	
-	public CardModel(String title, String definition, int id, int stack) {
+	public CardModel(String title, String definition, int id, int stack, int hits, int attempts) {
 		this.title = title;
 		this.definition = definition;
 		this.id = id;
 		this.stack = stack;
+		this.hits = hits;
+		this.attempts = attempts;
 	}
 	
 	public CardModel(CardModel card) {
@@ -50,6 +52,23 @@ public class CardModel {
 	
 	public int getStack() {
 		return stack;
+	}
+	
+	public int getHits() {
+		return hits;
+	}
+	
+	public int getAttempts() {
+		return attempts;
+	}
+	
+	public void correct() {
+		hits++;
+		attempts++;
+	}
+	
+	public void wrong() {
+		attempts++;
 	}
 
 }

@@ -52,13 +52,6 @@ public class CardCreator extends Activity {
 		defInput = (EditText)findViewById(R.id.definition);
 		defInput.setTypeface(chinacat);
 		
-		Bundle extras = getIntent().getExtras();
-				
-		if (extras != null) {
-				sInput.setText(extras.getString("stack"));
-				tInput.setText(extras.getString("title"));
-				defInput.setText(extras.getString("definition"));
-		}
 	}
 	
 	public void onDestroy() {
@@ -103,7 +96,7 @@ public class CardCreator extends Activity {
 			}
 		}
 	}
-	public String[] splitStacks(String s) {
+	private String[] splitStacks(String s) {
 		String[] stacks = s.split(";");
 		for (String string:stacks) {
 			string = string.trim();
@@ -116,11 +109,9 @@ public class CardCreator extends Activity {
 		getText();
 		
 		Intent intent = new Intent(CardCreator.this, StackMenu.class);
-		intent.putExtra("title", title);
-		intent.putExtra("definition", definition);
 		intent.putExtra("stack", stack);
 		
-		startActivity(intent);
+		startActivityForResult(intent, 1);
 	}
 
 	protected void onStop() {
@@ -137,11 +128,9 @@ public class CardCreator extends Activity {
 	    	getText();
 	    	
 	    	Intent intent = new Intent(this, StackMenu.class);
-	    	intent.putExtra("title", title);
-			intent.putExtra("definition", definition);
 			intent.putExtra("stack", stack);
 			
-	    	startActivity(intent);
+	    	startActivityForResult(intent, 1);
 	    	return true;
 	    }
 	    
@@ -152,10 +141,22 @@ public class CardCreator extends Activity {
 	private void getText() {
 		EditText editText = (EditText)findViewById(R.id.title);
 		title = editText.getText().toString();
+		title = title.trim();
 		editText = (EditText)findViewById(R.id.definition);
 		definition = editText.getText().toString();
+		definition = definition.trim();
 		editText = (EditText)findViewById(R.id.newStack);
 		stack = editText.getText().toString();
 	}
 	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode,resultCode,data);
+		Toast.makeText(this, "THERE", 500).show();
+		if (resultCode == RESULT_OK && requestCode == 1) {
+			if (data != null) {
+				Toast.makeText(this, "HERE", 500).show();
+				sInput.setText(data.getStringExtra("stack"));
+			}
+		}
+	}
 }

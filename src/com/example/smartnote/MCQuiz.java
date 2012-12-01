@@ -7,6 +7,8 @@ import java.util.Queue;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -17,11 +19,12 @@ import android.widget.Toast;
 
 public class MCQuiz extends Activity {
 	
-	private String answer;
+	private String answer, stack;
 	private Queue<CardModel> cardQueue;
 	private List<CardModel> cardList, answers;
 	private TextView question;
 	private RadioButton[] choices;
+	private int correct=0, atts=0;
 	
 	@SuppressWarnings("unchecked")
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,7 @@ public class MCQuiz extends Activity {
 	
 	public void initialize() {
 		Bundle extras = getIntent().getExtras();
-		String stack = extras.getString("stack");
+		stack = extras.getString("stack");
 		
 		SmartDBAdapter db = new SmartDBAdapter(this);
 		db.open();
@@ -83,6 +86,25 @@ public class MCQuiz extends Activity {
 		question.setTypeface(chinacat);
 			
 	}
+	
+	 private void update(boolean isCorrect) {
+	    	if (isCorrect) {
+	    		cardQueue.peek().correct();
+	    		correct++;
+	    		atts++;
+	    	} else {
+	    		cardQueue.peek().wrong();
+	    		atts++;
+	    	}
+	    	
+	    	SmartDBAdapter db = new SmartDBAdapter(this);
+	    	db.open();
+	    	
+	    	db.updateCard(cardQueue.peek());
+	    	
+	    	db.close();
+	    }
+
 	
 	/*Shuffles the cards and outputs an order for the cards to be quizzed in through
 	 * the use of a queue. This means that you cannot move backwards in the list
@@ -138,19 +160,51 @@ public class MCQuiz extends Activity {
 		if (cardQueue.size() > 1) {
 			if (answer.equals(cardQueue.peek().getTitle())) {
 				Toast.makeText(getApplicationContext(), "Correct!", 500).show();
+				update(true);
 				cardQueue.remove();
 			} else {
 				Toast.makeText(getApplicationContext(), "Answer is " + 
 						cardQueue.peek().getTitle(), 500).show();
+				update(false);
 				cardQueue.offer(cardQueue.remove());
 				} 
 			} else {
+				if (answer.equals(cardQueue.peek().getTitle())) {
+					correct++;
+					atts++;
+				} else {
+					atts++;
+				}
+				SmartDBAdapter db = new SmartDBAdapter(this);
+				db.open();
+				
+				db.insertMCTest(correct, atts, stack);
+				
+				db.close();
+				
 				finish();
 			}
 		getCard();
 		getChoices(new ArrayList<CardModel>(cardList));
 		RadioGroup rgButton = (RadioGroup)findViewById(R.id.rGroup);
 		rgButton.clearCheck();
+	}
+	
+	public void onBackPressed() {
+		new AlertDialog.Builder(this)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("Closing Activity")
+        .setMessage("Are you sure you want to close this activity? " +
+        		"The current statistics for this quiz will be lost!")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            finish();    
+        }
+
+        })
+    	.setNegativeButton("No", null)
+    	.show();
 	}
 
 }
