@@ -248,33 +248,44 @@ public class SmartDBAdapter {
 		return list;
     }
     
-    public List<Quiz> getMemQuiz() {
-    	Cursor cursor = db.query(MEM_STATS_TABLE, new String[] {ROW_ID, HITS, ATTEMPTS}, null,
-    			null, null, null, null);
+    public List<Quiz> getMemQuiz(String stack) {
+ 
+    	int stackID = getStackID(stack);
+    	
+    	Cursor cursor = db.query(MEM_STATS_TABLE, new String[] {ROW_ID, HITS, ATTEMPTS}, STACK + "=?",
+    			new String[] {String.valueOf(stackID)}, null, null, null);
     	
     	int hitIndex = cursor.getColumnIndex(HITS);
     	int attIndex = cursor.getColumnIndex(ATTEMPTS);
     	
     	List<Quiz> list = new ArrayList<Quiz>();
+    	
+    	cursor.moveToFirst();
     	
     	while(!cursor.isAfterLast()) {
     		int hits = cursor.getInt(hitIndex);
     		int atts = cursor.getInt(attIndex);
     		
     		list.add(new Quiz(hits, atts));
+    		cursor.moveToNext();
     	}
     	
     	return list;
+
     }
     
-    public List<Quiz> getMcQuiz() {
-    	Cursor cursor = db.query(MC_STATS_TABLE, new String[] {ROW_ID, HITS, ATTEMPTS}, null,
-    			null, null, null, null);
+    public List<Quiz> getMcQuiz(String stack) {
+    	
+    	int stackID = getStackID(stack);
+    	Cursor cursor = db.query(MC_STATS_TABLE, new String[] {ROW_ID, HITS, ATTEMPTS}, STACK + "=?",
+    			new String[] {String.valueOf(stackID)}, null, null, null);
     	
     	int hitIndex = cursor.getColumnIndex(HITS);
     	int attIndex = cursor.getColumnIndex(ATTEMPTS);
     	
     	List<Quiz> list = new ArrayList<Quiz>();
+    	
+    	cursor.moveToFirst();
     	
     	while(!cursor.isAfterLast()) {
     		int hits = cursor.getInt(hitIndex);

@@ -30,6 +30,7 @@
    				<data android:mimeType= "text/plain" />            
             </intent-filter>
         </activity>
+        <activity android:name="com.example.smartnote.QuizHistory" />
         <activity android:name = "com.example.smartnote.StacksGallery">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -37,8 +38,11 @@
    				<data android:mimeType= "text/plain" />            
             </intent-filter>
         </activity>
+        <activity android:name = "com.example.smartnote.MemHistory" />
+        <activity android:name = "com.example.smartnote.McHistory" />
         <activity android:name = "com.example.smartnote.Test"/>
         <activity android:name = "com.example.smartnote.ModeChooser" />
+        <activity android:name = "com.example.smartnote.CardManager"/>
         
     </application>
 </manifest>

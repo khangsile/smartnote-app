@@ -170,10 +170,9 @@ public class MCQuiz extends Activity {
 				} 
 			} else {
 				if (answer.equals(cardQueue.peek().getTitle())) {
-					correct++;
-					atts++;
+					update(true);
 				} else {
-					atts++;
+					update(false);
 				}
 				SmartDBAdapter db = new SmartDBAdapter(this);
 				db.open();

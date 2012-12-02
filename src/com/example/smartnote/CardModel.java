@@ -5,6 +5,7 @@ public class CardModel {
 	private String title;
 	private String definition;
 	private int id, stack, hits, attempts;
+	private boolean selected;
 	
 	public CardModel(String title, String definition, int id, int stack, int hits, int attempts) {
 		this.title = title;
@@ -13,6 +14,7 @@ public class CardModel {
 		this.stack = stack;
 		this.hits = hits;
 		this.attempts = attempts;
+		this.selected = false;
 	}
 	
 	public CardModel(CardModel card) {
@@ -62,6 +64,15 @@ public class CardModel {
 		return attempts;
 	}
 	
+	public String getDifficulty() {
+		if (attempts > 0) {
+			int difficulty = 11-(10*hits)/attempts;
+			return difficulty+"";
+		} else {
+			return "N/A";
+		}
+	}
+	
 	public void correct() {
 		hits++;
 		attempts++;
@@ -69,6 +80,14 @@ public class CardModel {
 	
 	public void wrong() {
 		attempts++;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+	
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 }

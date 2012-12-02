@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -38,6 +41,32 @@ public class ModeChooser extends Activity {
         bMcQuiz.setTypeface(chinacat);
 	}
 	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.stackmanager, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.deleteStack:
+			
+			break;
+		case R.id.quizHistory:
+			Intent qhIntent = new Intent(this, QuizHistory.class);
+			qhIntent.putExtra("stack", stack);
+			startActivity(qhIntent);
+			break;
+		case R.id.manageCards:
+			Intent cmIntent = new Intent(this, CardManager.class);
+			cmIntent.putExtra("stack", stack);
+			startActivity(cmIntent);
+			break;
+		}
+		
+		return true;
+	}
+	
 	public void toReview(View view) {
 		Intent intent = new Intent(this, Card.class);
 		intent.putExtra("stack", stack);
@@ -58,6 +87,11 @@ public class ModeChooser extends Activity {
 		
 		startActivity(intent);		
 
+	}
+	
+	public void onBackPressed() {
+		Intent intent = new Intent(this, StacksGallery.class);
+		startActivity(intent);
 	}
 
 }

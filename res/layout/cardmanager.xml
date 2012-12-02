@@ -12,19 +12,19 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
 		android:weightSum="1">
-		<Button android:id ="@+id/addStacks" 
+		<Button android:id ="@+id/delete" 
 		    android:layout_width="0dp"
 			android:layout_height="wrap_content" 
-			android:text="Add Stacks"
+			android:text="Delete"
 			android:layout_weight = ".5"
-			android:onClick = "addStacks" />
-		<Button android:id = "@+id/cancel"
+			android:onClick = "delete" />
+		<Button android:id = "@+id/copy"
 		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
-		    android:layout_toRightOf="@id/addStacks"
-		    android:text = "Cancel"
+		    android:layout_toRightOf="@id/delete"
+		    android:text = "Copy"
 		    android:layout_weight = ".5"
-		    android:onClick = "cancel" />
+		    android:onClick = "copy" />
 	</LinearLayout>
 	<ListView android:id="@android:id/list" 
 	    android:layout_width="fill_parent"

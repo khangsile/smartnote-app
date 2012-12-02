@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f5ff96" >
+    
+      <CheckBox
+        android:id="@+id/check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="4sp"
+        android:layout_marginRight="10sp" />
+    
+    
+      <TextView android:id = "@+id/title"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_alignParentLeft = "true"
+        android:text = "My New Title"
+        android:textSize = "25sp" />
+            
+    <TextView android:id = "@+id/correct"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_toLeftOf = "@id/check"
+        android:layout_alignTop = "@id/title"
+        android:text = "Correct: "
+        android:textSize = "12sp"
+        android:textColor = "#000" />
+    
+    <TextView android:id = "@+id/numCorrect"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_toRightOf = "@id/correct"
+        android:layout_alignTop = "@id/correct"
+        android:textSize = "12sp"
+        android:textColor = "#000" />
+    
+    <TextView android:id = "@+id/attempts"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_toLeftOf = "@id/check"
+        android:layout_below = "@id/correct"
+        android:text = "Attempts: " 
+        android:textSize = "12sp"
+        android:textColor = "#000" />
+    
+     <TextView android:id = "@+id/numAtts"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_toRightOf = "@id/attempts"
+        android:layout_alignTop = "@id/attempts"
+        android:textSize = "12sp"
+        android:textColor = "#000" />
+    
+    <TextView android:id = "@+id/difficulty"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_toLeftOf = "@id/check"
+        android:layout_below = "@id/attempts"
+        android:text = "Difficulty: "
+        android:textSize = "12sp"
+        android:textColor = "#000" />
+    
+     <TextView android:id = "@+id/gradePct"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_toRightOf = "@id/difficulty"
+        android:layout_alignTop = "@id/difficulty"
+        android:textSize = "12sp"
+        android:textColor = "#000" />
+    
+    
+    
+          
+
+</RelativeLayout>

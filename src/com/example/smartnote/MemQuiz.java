@@ -151,12 +151,9 @@ public class MemQuiz extends Activity implements OnInitListener {
 				} 
 			} else {
 				if (userAnswer.equals(modAnswer)) {
-					correct++;
-					atts++;
 					update(true);
 				}
 				else {
-					atts++;
 					update(false);
 				}
 				
