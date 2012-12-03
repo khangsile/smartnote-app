@@ -292,6 +292,7 @@ public class SmartDBAdapter {
     		int atts = cursor.getInt(attIndex);
     		
     		list.add(new Quiz(hits, atts));
+    		cursor.moveToNext();
     	}
     	
     	return list;
@@ -313,6 +314,10 @@ public class SmartDBAdapter {
     }
     
     public int deleteStack(String stackName) {
+    	int stackID = getStackID(stackName);
+    	
+    	db.delete(CARD_TABLE, STACK+"=?", new String[] {String.valueOf(stackID)});
+    	
     	return db.delete(STACK_TABLE, STACK_NAME+"=?", new String [] {stackName});
     }
     

@@ -4,7 +4,7 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="#ffff88">
+  android:background="#f5ff96">
   
    
  	<TextView android:id="@+id/defTxt"

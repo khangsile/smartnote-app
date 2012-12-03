@@ -33,6 +33,7 @@ public class McHistory extends ListActivity {
 			e.printStackTrace();
 		}
 		
+		db.close();
 		return list;
 	}
 

@@ -1,6 +1,7 @@
 package com.example.smartnote;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -16,6 +17,8 @@ public class StacksGallery extends ListActivity {
 		
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle("Your Stacks");
+		setContentView(R.layout.stacksgallery);
 			
 		 ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 			        android.R.layout.simple_list_item_1, getMenuItems());
@@ -45,6 +48,8 @@ public class StacksGallery extends ListActivity {
 		}
 		
 		db.close();
+		
+		Collections.sort(stringList);
 		return stringList;
 	}
 	

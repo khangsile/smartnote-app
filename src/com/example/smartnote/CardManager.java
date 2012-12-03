@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class CardManager extends ListActivity {
 
@@ -67,11 +68,17 @@ public class CardManager extends ListActivity {
 		db = new SmartDBAdapter(this);
 		db.open();
 		
-		List<CardModel> list = new ArrayList<CardModel>();
-		list = db.getItems(stack);
+		try {
+			List<CardModel> list = new ArrayList<CardModel>();
+			list = db.getItems(stack);
 		
-		db.close();
-		return list;
+			db.close();
+			return list; 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+		return null;
 	}
 	
 	public void cancel(View view) {		
@@ -87,7 +94,11 @@ public class CardManager extends ListActivity {
 		List<CardModel> cards = adapter.getList();
 		for (int i=0; i<cards.size(); i++) {
 			if (cards.get(i).isSelected()) {
+				try {
 				db.deleteCard(cards.get(i));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -98,7 +109,60 @@ public class CardManager extends ListActivity {
 	
 	public void copy(View view) {
 		
+		Intent intent = new Intent(this, StackMenu.class);
+		intent.putExtra("stack", stack);
+		
+		startActivityForResult(intent, 1);
 	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode,resultCode,data);
+		if (resultCode == RESULT_OK && requestCode == 1) {
+			if (data != null) {
+				String extraStacks = data.getStringExtra("stack");
+				String[] stacks = splitStacks(extraStacks);
+				
+				copyCards(stacks);
+			}
+		}
+	}
+	
+	private void copyCards(String[] stacks) {
+		List<CardModel> cards = adapter.getList();
+		
+		db = new SmartDBAdapter(this);
+		db.open();
+		
+		for (CardModel card: cards) {
+			
+			if (card.isSelected()) {
+				String title = card.getTitle();
+				String definition = card.getDef();
+				
+				for(int i=0; i < stacks.length; i++) {
+					if (!stacks[i].equals("")) {
+						try {
+						if (!db.matchCard(title, definition, stacks[i]))
+							db.insertCard(title, definition, stacks[i]);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}	
+			}
+		}
+		
+		db.close();
+	}
+	
+	private String[] splitStacks(String s) {
+		String[] stacks = s.split(";");
+		for(int i=0; i<stacks.length; i++) {
+			stacks[i] = stacks[i].trim();
+		}
+		return stacks;
+	}
+
 	
 	public void onBackPressed() {
 		Intent intent = new Intent(this, ModeChooser.class);

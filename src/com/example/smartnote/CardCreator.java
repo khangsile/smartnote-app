@@ -98,8 +98,8 @@ public class CardCreator extends Activity {
 	}
 	private String[] splitStacks(String s) {
 		String[] stacks = s.split(";");
-		for (String string:stacks) {
-			string = string.trim();
+		for(int i=0; i<stacks.length; i++) {
+			stacks[i] = stacks[i].trim();
 		}
 		return stacks;
 	}
@@ -108,7 +108,7 @@ public class CardCreator extends Activity {
 		
 		getText();
 		
-		Intent intent = new Intent(CardCreator.this, StackMenu.class);
+		Intent intent = new Intent(this, StackMenu.class);
 		intent.putExtra("stack", stack);
 		
 		startActivityForResult(intent, 1);
@@ -151,7 +151,6 @@ public class CardCreator extends Activity {
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode,resultCode,data);
-		Toast.makeText(this, "THERE", 500).show();
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			if (data != null) {
 				Toast.makeText(this, "HERE", 500).show();

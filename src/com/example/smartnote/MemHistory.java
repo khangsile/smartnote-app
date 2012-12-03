@@ -32,6 +32,7 @@ public class MemHistory extends ListActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		db.close();
 		
 		return list;
 	}

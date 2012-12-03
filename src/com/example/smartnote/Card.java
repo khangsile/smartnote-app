@@ -114,11 +114,15 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	
 	private void getCard() {
 		
-		String definition = cardList.get(cardListIndex).getDef();
-		String title = cardList.get(cardListIndex).getTitle();
+		try {
+			String definition = cardList.get(cardListIndex).getDef();
+			String title = cardList.get(cardListIndex).getTitle();
 		
-		titleTxt.setText(title);
-		defTxt.setText(definition);
+			titleTxt.setText(title);
+			defTxt.setText(definition);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void toChinaCat() {
@@ -208,23 +212,18 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 		SmartDBAdapter db = new SmartDBAdapter(this);
 		db.open();
 		
-		int success = db.deleteCard(cardList.get(cardListIndex));
-		Toast.makeText(this, success + "", 500).show();
-		
-		if(cardList.size() <= 1) {
-			int succes = db.deleteStack(stack);
-			Toast.makeText(this, succes + "", 500).show();
-			Intent intent = new Intent(this, StacksGallery.class);
-			startActivity(intent);
+		try {
+			int success = db.deleteCard(cardList.get(cardListIndex));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		else {
-			cardList.remove(cardListIndex);
-			if (changeCard(true)) {
-				getCard();
-			} else {
-				changeCard(false);
-				getCard();
-			}
+		
+		cardList.remove(cardListIndex);
+		if (changeCard(true)) {
+			getCard();
+		} else {
+			changeCard(false);
+			getCard();
 		}
 		
 		db.close();

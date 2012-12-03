@@ -50,7 +50,12 @@ public class ModeChooser extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.deleteStack:
+			SmartDBAdapter db = new SmartDBAdapter(this);
+			db.open();
+			db.deleteStack(stack);
 			
+			Intent intent = new Intent(this, StacksGallery.class);
+			startActivity(intent);
 			break;
 		case R.id.quizHistory:
 			Intent qhIntent = new Intent(this, QuizHistory.class);

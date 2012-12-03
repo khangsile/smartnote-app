@@ -90,8 +90,6 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 	    return view;
 	}
 	
-	
-	
 	public List<CardModel> getList() {
 		return this.list;
 	}

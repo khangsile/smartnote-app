@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+       
+    <RelativeLayout android:id = "@+id/top_control_bar"
+        android:layout_height = "wrap_content"
+        android:layout_width = "match_parent"
+        android:background = "#f5ff96" >
+        
+   	 	<EditText android:id = "@+id/search_add"
+        	android:layout_width = "fill_parent"
+        	android:layout_height = "wrap_content"
+        	android:layout_alignParentTop = "true"
+        	android:singleLine = "true"
+        	android:hint = "Search Or Add Stack Here"
+        	android:textSize = "20sp" />
+    </RelativeLayout>
+    
+	<ListView android:id="@android:id/list" 
+	    android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textColor = "#000" 
+		android:layout_below="@id/top_control_bar"></ListView>
+	
+
+</RelativeLayout>
