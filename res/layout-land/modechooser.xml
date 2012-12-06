@@ -3,17 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ffff88" >
+    android:background="#f5ff96" >
     
-   <RelativeLayout android:layout_width = "fill_parent"
+       <RelativeLayout android:layout_width = "fill_parent"
         android:layout_height = "wrap_content"
-        android:layout_alignParentTop ="true"
         android:layout_centerHorizontal = "true" >
         <TextView android:id = "@+id/modeChoice"
         	android:layout_height = "wrap_content"
         	android:layout_width = "wrap_content"
         	android:layout_centerHorizontal = "true"
-        	android:paddingTop = "25sp"
+        	android:paddingTop = "10sp"
         	android:text = "Choose a Mode"
         	android:textColor = "#000"
         	android:textSize = "35sp" />

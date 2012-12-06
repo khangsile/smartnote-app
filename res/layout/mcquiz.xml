@@ -23,24 +23,28 @@
     	    android:layout_height="wrap_content"
     	    android:text="@id/a"
     	    android:textColor = "#000"
+    		android:button="@android:drawable/btn_radio"
     	    android:onClick="onRadioButtonClicked"/>
     	<RadioButton android:id="@+id/b"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
         	android:text="@id/b"
         	android:textColor = "#000"
+    		android:button="@android:drawable/btn_radio"
         	android:onClick="onRadioButtonClicked"/>
     	<RadioButton android:id="@+id/c" 
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
         	android:text="@id/c"
         	android:textColor = "#000"
+    		android:button="@android:drawable/btn_radio"
         	android:onClick="onRadioButtonClicked"/>
     	<RadioButton android:id="@+id/d"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
         	android:text="@id/c"
         	android:textColor = "#000"
+    		android:button="@android:drawable/btn_radio"
         	android:onClick="onRadioButtonClicked"/>
 	</RadioGroup>
     

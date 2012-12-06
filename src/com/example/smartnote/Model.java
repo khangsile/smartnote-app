@@ -4,9 +4,11 @@ public class Model {
 	
 	private String name;
 	private boolean selected;
+	private long count;
 	
-	public Model(String name) {
+	public Model(String name, long count) {
 		this.name = name;
+		this.count = count;
 		selected = false;
 	}
 	
@@ -24,6 +26,14 @@ public class Model {
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+	
+	public void setCount(long count) {
+		this.count = count;
+	}
+	
+	public long getCount() {
+		return count;
 	}
 
 }

@@ -6,8 +6,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
+
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,18 +20,16 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class Card extends Activity implements OnInitListener, OnGestureListener {
+public class Card extends SherlockActivity implements OnInitListener, OnGestureListener {
 	private GestureDetector gestureDetector;
-		
+			
 	private static final String FLIP_TAB = "flipperTab";
 	private static final String LIST_POS = "listPos";
 	private String stack;
@@ -34,16 +37,26 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	private int MY_TTS_DATA_CHECK_CODE = 0;
 	private int MY_STACK_DATA_CHECK_CODE = 1;
 	
+	private static final int EDIT = 1;
+	private static final int DELETE = 2;
+	private static final int COPY = 3;
+	private static final int SHUFFLE = 4;
+	private static final int ALPHABETIZE = 5;
+	
 	private TextView defTxt, titleTxt;
 	private ViewFlipper flipper;
 	private TextToSpeech myTTS;
 	
 	private List<CardModel> cardList;
 	private int cardListIndex = 0;
+	
+	ActionMode mMode;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.card);
+        setContentView(R.layout.card);
+        
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		initialize();
 		toChinaCat();
@@ -55,42 +68,95 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.cardmenu, menu);
-	    return true;
-	  }
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.menu_search:
-	      Toast.makeText(this, "Search", Toast.LENGTH_SHORT)
-	          .show();
-	      break;
-	    case R.id.menu_delete:
-	      delete();
-	      break;
-	    case R.id.menu_edit:
-	    	Toast.makeText(this, "Edit", Toast.LENGTH_SHORT)
-	    		.show();
-	      break;
-	    case R.id.menu_add:
-	    	copy();
-	      break;
-	    case R.id.menu_shuffle:
-	    	shuffle();
-	      break;
-	    case R.id.menu_alphabetize:
-	    	alphabetize();
-	      break;
-	    default:
-	      break;
-	    }
-
-	    return true;
-	  }
 		
-	private void initialize() {
+		menu.add("Home")
+    	.setIcon(R.drawable.ic_menu_home)
+    	.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+    	
+    	SubMenu subMenu1 = menu.addSubMenu("Navigation");
+        subMenu1.add("Stacks Gallery");
+        subMenu1.add("New Card");
+        subMenu1.add("Download Stack");
+        
+        MenuItem subMenu1Item = subMenu1.getItem();
+        subMenu1Item.setIcon(R.drawable.ic_menu_moreoverflow);
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+    	menu.add("Search")
+        .setIcon(R.drawable.ic_menu_search)
+        .setActionView(R.layout.collapsable_edit_text)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+    	
+	    return true;
+	  }
+	
+    private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        	
+        	menu.add(0, EDIT, 0, "Edit")
+        		.setIcon(R.drawable.ic_menu_edit)
+        		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            
+            menu.add(0, DELETE, 0, "Delete")
+            	.setIcon(R.drawable.ic_menu_delete)
+            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            
+            menu.add(0, COPY, 0, "Copy")
+            	.setIcon(R.drawable.ic_menu_copy_light)
+            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+                        
+            menu.add(0, SHUFFLE, 0, "Shuffle")
+            	.setIcon(R.drawable.ic_menu_shuffle)
+            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            
+            menu.add(0, ALPHABETIZE, 0, "Alphabetize")
+            	.setIcon(R.drawable.ic_menu_mark)
+            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            
+            return true;
+        }
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			// TODO Auto-generated method stub
+			switch (item.getItemId()) {
+			case EDIT:
+				break;
+			case DELETE:
+				delete();
+				break;
+			case COPY:
+				copy();
+				break;
+			case SHUFFLE:
+				shuffle();
+				break;
+			case ALPHABETIZE:
+				alphabetize();
+				break;
+			default:
+				break;
+			}
+			            mode.finish();
+            return true;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			// TODO Auto-generated method stub
+			
+		}
+    }
+    	
+    private void initialize() {
 		
 		Bundle extras = getIntent().getExtras();
 		stack = extras.getString("stack");
@@ -371,7 +437,7 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	@Override
 	public void onLongPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+		 mMode = startActionMode(new AnActionModeOfEpicProportions());
 	}
 
 
@@ -400,6 +466,8 @@ public class Card extends Activity implements OnInitListener, OnGestureListener 
 	public boolean onTouchEvent(MotionEvent me) {
 		return gestureDetector.onTouchEvent(me);
 		}
+
+	
 }
 
 

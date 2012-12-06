@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 public class SmartDBAdapter {
 
@@ -240,12 +241,28 @@ public class SmartDBAdapter {
 		
 		while(!cursor.isAfterLast()) {
 			String name = cursor.getString(stackNameIndex);
-			list.add(new Model(name));
+			long count = 0;
+			try {
+				count = getStackSize(name);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			list.add(new Model(name, count));
 			
 			cursor.moveToNext();
 		}
 		
 		return list;
+    }
+    
+    public long getStackSize(String stack) {
+    	int stackID = getStackID(stack);
+    	String query = "SELECT COUNT(*) FROM " + CARD_TABLE + " WHERE " +
+    			STACK + " = " + String.valueOf(stackID);
+    	SQLiteStatement statement = db.compileStatement(query);
+    	long count = statement.simpleQueryForLong();
+    	
+    	return count;
     }
     
     public List<Quiz> getMemQuiz(String stack) {

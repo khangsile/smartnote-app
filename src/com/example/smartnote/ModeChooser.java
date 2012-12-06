@@ -2,6 +2,7 @@ package com.example.smartnote;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -98,5 +99,5 @@ public class ModeChooser extends Activity {
 		Intent intent = new Intent(this, StacksGallery.class);
 		startActivity(intent);
 	}
-
+	
 }

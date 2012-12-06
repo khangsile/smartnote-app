@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -68,17 +69,17 @@ public class CardManager extends ListActivity {
 		db = new SmartDBAdapter(this);
 		db.open();
 		
-		try {
-			List<CardModel> list = new ArrayList<CardModel>();
-			list = db.getItems(stack);
+		List<CardModel> list = new ArrayList<CardModel>();
+
 		
-			db.close();
-			return list; 
+		try {
+			list = db.getItems(stack);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		db.close();
 		
-		return null;
+		return list;
 	}
 	
 	public void cancel(View view) {		
@@ -101,6 +102,8 @@ public class CardManager extends ListActivity {
 				}
 			}
 		}
+		
+		db.close();
 		
 		Intent intent = new Intent(this, CardManager.class);
 		intent.putExtra("stack", stack);
@@ -169,4 +172,5 @@ public class CardManager extends ListActivity {
 		intent.putExtra("stack", stack);
 		startActivity(intent);
 	}
+	
 }

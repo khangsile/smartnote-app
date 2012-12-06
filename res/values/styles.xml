@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Theme.Styled" parent = "@style/Theme.Sherlock">
+        <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
+        <item name="actionButtonStyle">@style/Widget.Styled.ActionButton</item>
+        <item name="android:actionButtonStyle">@style/Widget.Styled.ActionButton</item>
+    </style>
+    
+    <color name="action_bar_background_color">#210000</color>
+    <style name="Widget.Styled.ActionBar" parent="@style/Widget.Sherlock.ActionBar.Solid">
+        <item name="background">@color/action_bar_background_color</item>
+        <item name="android:background">@color/action_bar_background_color</item>
+        <item name="titleTextStyle">@style/TextAppearance.ActionBar.TitleTextStyle</item>
+        <item name="android:titleTextStyle">@style/TextAppearance.ActionBar.TitleTextStyle</item>
+    </style>
+    
+    <style name = "TextAppearance.ActionBar.TitleTextStyle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">#f5ff96</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+    
+    <style name="Widget.Styled.ActionButton" parent="Widget.Sherlock.ActionButton">
+    <item name="android:minWidth">20dip</item>
+</style>
+</resources>

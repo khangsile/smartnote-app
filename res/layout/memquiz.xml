@@ -15,7 +15,7 @@
  		android:textSize = "15sp"
  		android:textColor="#000000"
  		android:maxLines = "12"
- 		android:background = "#ffff88"
+ 		android:background = "#f5ff96"
  	/>
  		
  	<Button android:id = "@+id/answer"

@@ -2,8 +2,6 @@ package com.example.smartnote;
 
 import java.util.List;
 
-import com.example.smartnote.InteractiveArrayAdapter.ViewHolder;
-
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -20,14 +18,14 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 	private final Activity context;
 	
 	public CardArrayAdapter(Activity context, List<CardModel> list) {
-		super(context, android.R.layout.simple_list_item_multiple_choice, R.layout.cardlist, list);
+		super(context, R.layout.cardlist, list);
 		
 		this.context = context;
 		this.list = list;
 	}
 
 	static class ViewHolder {
-		protected TextView title, correct, atts, diff;
+		protected TextView title, correct, atts, diff, definition;
 		protected CheckBox check;
 	}
 	
@@ -45,6 +43,7 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 			viewholder.atts = (TextView)view.findViewById(R.id.numAtts);
 			viewholder.diff = (TextView)view.findViewById(R.id.gradePct);
 			viewholder.check = (CheckBox)view.findViewById(R.id.check);
+			viewholder.definition = (TextView)view.findViewById(R.id.definition);
 			
 			viewholder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 				 public void onCheckedChanged(CompoundButton buttonView,
@@ -68,6 +67,7 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 	    holder.correct.setText(list.get(position).getHits() + "");
 	    holder.atts.setText(list.get(position).getAttempts() + "");
 	    holder.diff.setText(list.get(position).getDifficulty());
+	    holder.definition.setText(list.get(position).getDef());
 	    holder.check.setChecked(list.get(position).isSelected());
 	    
 	    Typeface chinacat = Typeface.createFromAsset(holder.title.getContext()
@@ -77,6 +77,7 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 	    holder.diff.setTypeface(chinacat);
 	    holder.correct.setTypeface(chinacat);
 	    holder.atts.setTypeface(chinacat);
+	    holder.definition.setTypeface(chinacat);
 	    
 	    TextView lCorrect = (TextView) view.findViewById(R.id.correct);
 	    TextView lAttempts = (TextView) view.findViewById(R.id.attempts);

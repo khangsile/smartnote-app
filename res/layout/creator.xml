@@ -4,7 +4,7 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="#ffff88">
+  android:background="#f5ff96">
  <TextView android:id="@+id/title_header"
  	android:layout_width="wrap_content"
  	android:layout_height="wrap_content"
@@ -17,7 +17,11 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:layout_toRightOf="@id/title_header"
+	android:layout_marginLeft = "5sp"
+	android:layout_marginRight = "5sp"
+	android:capitalize = "sentences"
 	android:textSize = "20sp"
+	android:textColor = "#000"
 	android:singleLine="true" />
 <TextView android:id="@+id/stack_header"
 	android:layout_width="wrap_content"
@@ -44,12 +48,16 @@
 	android:layout_toLeftOf="@id/stackButton"
 	android:layout_toRightOf="@id/stack_header"
 	android:layout_below="@id/title"
+	android:layout_marginLeft = "5sp"
+	android:capitalize = "sentences"
 	android:textSize="20sp"
+	android:textColor = "#000"
 	android:singleLine= "true" />
  <TextView android:id="@+id/definition_header"
  	android:layout_width="wrap_content"
  	android:layout_height="wrap_content"
  	android:layout_below="@id/newStack"
+ 	android:layout_marginTop = "3sp"
  	android:textSize="20sp"
  	android:textColor="#000"
  	android:text="@string/define" />
@@ -57,6 +65,7 @@
  	android:layout_width="fill_parent"
  	android:layout_height="wrap_content"
  	android:layout_alignParentBottom="true"
+ 	android:textColor = "#000"
  	android:text = "@string/cardCreate" 
  	android:onClick = "createCard" />
 
@@ -66,6 +75,10 @@
  	android:layout_height="match_parent"
  	android:layout_below="@id/definition_header"
  	android:layout_above = "@id/createCard"
+ 	android:layout_marginLeft = "5sp"
+ 	android:layout_marginRight = "5sp"
+ 	android:capitalize = "sentences"
+ 	android:textColor = "#000"
  	android:textSize = "20sp"
  	android:gravity="top" />
  

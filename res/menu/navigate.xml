@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id = "@+id/menu_stacks"
+	    android:icon = "@drawable/ic_menu_archive"
+	    android:title = "View Stacks" />
+    <item android:id = "@+id/menu_compose"
+        android:icon = "@drawable/ic_menu_compose"
+        android:title = "Compose Card" />
+    <item android:id = "@+id/menu_download"
+        android:icon = "@drawable/ic_menu_upload"
+        android:title = "Download Stacks" />
+    
+
+</menu>

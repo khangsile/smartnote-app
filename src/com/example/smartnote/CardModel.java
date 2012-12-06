@@ -69,7 +69,7 @@ public class CardModel {
 			int difficulty = 11-(10*hits)/attempts;
 			return difficulty+"";
 		} else {
-			return "N/A";
+			return "";
 		}
 	}
 	
