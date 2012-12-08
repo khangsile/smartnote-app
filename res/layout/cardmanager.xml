@@ -12,6 +12,7 @@
 		    android:layout_width="0dp"
 			android:layout_height="wrap_content" 
 			android:text="Delete"
+			android:textColor="#000"
 			android:layout_weight = ".5"
 			android:onClick = "delete" />
 		<Button android:id = "@+id/copy"
@@ -19,6 +20,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_toRightOf="@id/delete"
 		    android:text = "Copy"
+		    android:textColor = "#000"
 		    android:layout_weight = ".5"
 		    android:onClick = "copy" />
 	</LinearLayout>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background = "#f5ff96" >
+    
+    <LinearLayout android:id = "@+id/buttons"
+        android:layout_height = "wrap_content"
+        android:layout_width = "fill_parent"
+        android:layout_alignParentBottom = "true"
+        android:weightSum = "3">
+        <Button android:id = "@+id/add"
+            android:layout_height = "wrap_content"
+            android:layout_width = "0dp"
+            android:layout_weight = "1"
+            android:text = "Add"
+            android:textColor = "#000"
+            android:textSize = "20sp"
+            android:onClick = "add" />
+        <Button android:id = "@+id/edit" 
+            android:layout_height = "wrap_content"
+            android:layout_width = "0dp"
+            android:layout_weight = "1"
+            android:text = "Edit"
+            android:textColor = "#000"
+            android:textSize = "20sp"
+            android:onClick = "edit" />
+        <Button android:id = "@+id/cancel" 
+            android:layout_height = "wrap_content"
+            android:layout_width = "0dp"
+            android:layout_weight = "1"
+            android:text = "Cancel"
+            android:textColor = "#000"
+            android:textSize = "20sp"
+            android:onClick = "cancel" />
+        
+    </LinearLayout>
+    
+    <TextView android:id = "@+id/title_header"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:layout_alignParentLeft = "true"
+        android:layout_marginTop = "50sp"
+        android:textSize = "25sp"
+        android:text = "Title: "
+        android:textColor = "#000" />
+    
+    <EditText android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height = "wrap_content"
+        android:layout_toRightOf="@id/title_header"
+        android:layout_alignTop = "@id/title_header"
+        android:layout_marginLeft = "5sp"
+        android:layout_marginRight = "5sp"
+        android:textCursorDrawable="@null"
+        android:background = "#fff"
+		android:capitalize = "sentences"
+        android:textColor = "#000"
+        android:textSize="25sp"
+        android:singleLine="true"/>
+    
+    <TextView android:id = "@+id/def_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/title_header"
+        android:layout_marginTop = "5sp"
+        android:textColor = "#000"
+        android:textSize="25sp"
+        android:text = "Definition: " />
+    
+    <EditText android:id="@+id/definition"
+        android:layout_width = "fill_parent"
+        android:layout_height = "wrap_content"
+        android:layout_below = "@id/def_header"
+        android:layout_above = "@id/buttons"
+        android:textCursorDrawable="@null"
+        android:gravity = "top"
+		android:background = "#fff"
+		android:capitalize = "sentences"
+        android:layout_marginLeft = "5sp"
+        android:layout_marginRight = "5sp"
+        android:textColor = "#000"
+        android:textSize="25sp"/>
+    
+
+</RelativeLayout>

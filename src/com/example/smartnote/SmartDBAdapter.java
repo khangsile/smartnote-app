@@ -151,6 +151,17 @@ public class SmartDBAdapter {
     	return db.insert(CARD_TABLE, null, values);
     }
     
+    public long insertCard(String title, String definition, int stackID) {    	
+    	ContentValues values = new ContentValues();
+    	values.put(STACK, stackID);
+    	values.put(TITLE, title);
+    	values.put(DEFINITION, definition);
+    	values.put(HITS, 0);
+    	values.put(ATTEMPTS, 0);
+    	return db.insert(CARD_TABLE, null, values);
+    }
+
+    
     public long insertStack(String newStack) {
     	ContentValues values = new ContentValues();
     	values.put(STACK_NAME, newStack);
@@ -170,6 +181,19 @@ public class SmartDBAdapter {
     	return false;
     	
     }
+    
+    public boolean matchCard(String title, String definition, int stackID) {
+    	Cursor cursor = db.query(CARD_TABLE, new String[] { TITLE }, 
+    			TITLE+"=? AND "+DEFINITION+"=? AND " + STACK+"=?", new String[] { title, definition, 
+    			String.valueOf(stackID)}, null, null, null);
+    	    	
+    	if (cursor!=null && cursor.getCount() == 1) 
+    		return true;
+    	
+    	return false;
+    	
+    }
+
     
     public boolean matchStack(String stack) {
     	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_NAME},

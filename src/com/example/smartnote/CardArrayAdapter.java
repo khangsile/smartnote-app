@@ -64,9 +64,9 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 		
 		ViewHolder holder = (ViewHolder) view.getTag();
 	    holder.title.setText(list.get(position).getTitle());
-	    holder.correct.setText(list.get(position).getHits() + "");
-	    holder.atts.setText(list.get(position).getAttempts() + "");
-	    holder.diff.setText(list.get(position).getDifficulty());
+	    holder.correct.setText("Correct: " + list.get(position).getHits());
+	    holder.atts.setText("Attempts: " + list.get(position).getAttempts() + "");
+	    holder.diff.setText("Difficulty: " + list.get(position).getDifficulty());
 	    holder.definition.setText(list.get(position).getDef());
 	    holder.check.setChecked(list.get(position).isSelected());
 	    
@@ -78,16 +78,7 @@ public class CardArrayAdapter extends ArrayAdapter<CardModel>{
 	    holder.correct.setTypeface(chinacat);
 	    holder.atts.setTypeface(chinacat);
 	    holder.definition.setTypeface(chinacat);
-	    
-	    TextView lCorrect = (TextView) view.findViewById(R.id.correct);
-	    TextView lAttempts = (TextView) view.findViewById(R.id.attempts);
-	    TextView lGrade = (TextView) view.findViewById(R.id.difficulty);
-	    
-	    lCorrect.setTypeface(chinacat);
-	    lAttempts.setTypeface(chinacat);
-	    lGrade.setTypeface(chinacat);
-	    
-	    
+	    	    
 	    return view;
 	}
 	

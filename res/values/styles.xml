@@ -4,7 +4,7 @@
         <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
         <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
         <item name="actionButtonStyle">@style/Widget.Styled.ActionButton</item>
-        <item name="android:actionButtonStyle">@style/Widget.Styled.ActionButton</item>
+        <item name="android:actionButtonStyle">@style/Widget.Styled.ActionButton</item>        
     </style>
     
     <color name="action_bar_background_color">#210000</color>
@@ -21,6 +21,7 @@
     </style>
     
     <style name="Widget.Styled.ActionButton" parent="Widget.Sherlock.ActionButton">
-    <item name="android:minWidth">20dip</item>
-</style>
+    	<item name="android:minWidth">20dip</item>
+	</style>
+
 </resources>

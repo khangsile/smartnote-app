@@ -7,6 +7,7 @@
     
       <CheckBox
         android:id="@+id/check"
+        android:button = "@android:drawable/btn_radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -32,54 +33,28 @@
           android:textSize = "15sp"
           android:singleLine = "true" />
             
-    <TextView android:id = "@+id/correct"
+    <TextView android:id = "@+id/numCorrect"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
         android:layout_toLeftOf = "@id/check"
         android:layout_alignTop = "@id/title"
-        android:text = "Correct: "
         android:textSize = "12sp"
         android:textColor = "#000" />
-    
-    <TextView android:id = "@+id/numCorrect"
-        android:layout_height = "wrap_content"
-        android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/correct"
-        android:layout_alignTop = "@id/correct"
-        android:textSize = "12sp"
-        android:textColor = "#000" />
-    
-    <TextView android:id = "@+id/attempts"
-        android:layout_height = "wrap_content"
-        android:layout_width = "wrap_content"
-        android:layout_toLeftOf = "@id/check"
-        android:layout_below = "@id/correct"
-        android:text = "Attempts: " 
-        android:textSize = "12sp"
-        android:textColor = "#000" />
+
     
      <TextView android:id = "@+id/numAtts"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/attempts"
-        android:layout_alignTop = "@id/attempts"
-        android:textSize = "12sp"
-        android:textColor = "#000" />
-    
-    <TextView android:id = "@+id/difficulty"
-        android:layout_height = "wrap_content"
-        android:layout_width = "wrap_content"
         android:layout_toLeftOf = "@id/check"
-        android:layout_below = "@id/attempts"
-        android:text = "Difficulty: "
+        android:layout_below = "@id/numCorrect"
         android:textSize = "12sp"
         android:textColor = "#000" />
-    
+        
      <TextView android:id = "@+id/gradePct"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/difficulty"
-        android:layout_alignTop = "@id/difficulty"
+        android:layout_toLeftOf = "@id/check"
+        android:layout_below = "@id/numAtts"
         android:textSize = "12sp"
         android:textColor = "#000" />
     

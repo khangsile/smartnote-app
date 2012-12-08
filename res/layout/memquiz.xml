@@ -6,9 +6,15 @@
   android:layout_height="match_parent"
   android:background="#f5ff96">
   
+    <TextView android:id="@+id/index"
+	    android:layout_width = "wrap_content"
+	    android:layout_height = "wrap_content"
+	    android:textColor = "#000"
+	    android:layout_alignParentTop = "true"
+	    android:layout_alignParentRight = "true" />
    
  	<TextView android:id="@+id/defTxt"
- 	  	android:paddingTop="10sp"
+ 	  	android:layout_marginTop="50sp"
  		android:layout_height="fill_parent"
  		android:layout_width="fill_parent"
  		android:text="Definitions"
@@ -23,6 +29,7 @@
  	    android:layout_height = "wrap_content"
  	    android:layout_width = "fill_parent"
  	    android:text = "Answer"
+ 	    android:textColor = "#000"
  	    android:textSize = "15sp"
  	    android:onClick = "answer" />
  	<Button android:id = "@+id/speak"
@@ -31,6 +38,7 @@
  		android:layout_height = "wrap_content"
  		android:layout_width = "wrap_content"
  		android:text = "S"
+ 		android:textColor = "#000"
  		android:textSize = "20sp"
  		android:onClick = "talk" />
  	<EditText android:id = "@+id/answerHeader"

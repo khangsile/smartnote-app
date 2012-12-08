@@ -1,18 +1,13 @@
 package com.example.smartnote;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.actionbarsherlock.view.SubMenu;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -22,7 +17,6 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -31,24 +25,27 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 	private GestureDetector gestureDetector;
 			
 	private static final String FLIP_TAB = "flipperTab";
-	private static final String LIST_POS = "listPos";
 	private String stack;
 	
 	private int MY_TTS_DATA_CHECK_CODE = 0;
 	private int MY_STACK_DATA_CHECK_CODE = 1;
+	private int MY_EDIT_DATA_CHECK_CODE = 2;
 	
 	private static final int EDIT = 1;
 	private static final int DELETE = 2;
 	private static final int COPY = 3;
 	private static final int SHUFFLE = 4;
 	private static final int ALPHABETIZE = 5;
+	private static final int SWITCH_VIEW = 6;
+	private static final int MANAGE_CARDS = 7;
+	private static final int HOME = 8;
+	private boolean SINGLE_VIEW;
 	
-	private TextView defTxt, titleTxt;
+	private TextView defTxt, titleTxt, indexTxt;
 	private ViewFlipper flipper;
 	private TextToSpeech myTTS;
 	
-	private List<CardModel> cardList;
-	private int cardListIndex = 0;
+	private Deck deck;
 	
 	ActionMode mMode;
 
@@ -63,32 +60,71 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		
 		gestureDetector = new GestureDetector(this);
 		
-		getCard();
+		displayCard();
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
-		menu.add("Home")
+		menu.add(0, HOME, 0, "Home")
     	.setIcon(R.drawable.ic_menu_home)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-    	
-    	SubMenu subMenu1 = menu.addSubMenu("Navigation");
-        subMenu1.add("Stacks Gallery");
-        subMenu1.add("New Card");
-        subMenu1.add("Download Stack");
-        
-        MenuItem subMenu1Item = subMenu1.getItem();
-        subMenu1Item.setIcon(R.drawable.ic_menu_moreoverflow);
-        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
-    	menu.add("Search")
+		menu.add("Search")
         .setIcon(R.drawable.ic_menu_search)
         .setActionView(R.layout.collapsable_edit_text)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
     	
+    	SubMenu subMenu1 = menu.addSubMenu("Navigation");
+        subMenu1.add("Stacks Gallery")
+        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+				@Override
+				public boolean onMenuItemClick(MenuItem item) {
+					// TODO Auto-generated method stub
+					Intent sgIntent = new Intent(getApplicationContext(), StacksGallery.class);
+					startActivity(sgIntent);
+					return true;
+				}
+        		
+        	});
+        subMenu1.add("New Card")
+        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        		public boolean onMenuItemClick(MenuItem item) {
+					Intent ccIntent = new Intent(getApplicationContext(), CardCreator.class);
+					startActivity(ccIntent);
+        			return true;	
+        		}
+        	});
+        subMenu1.add("Download Stack")
+        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        		public boolean onMenuItemClick(MenuItem item) {
+        			//Intent dlIntent = new Intent(getApplicationContext(), )
+        			Toast.makeText(getApplicationContext(), "Feature in next version?", 250).show();
+        			return true;
+        		}
+        	});
+        		    	
+    	MenuItem subMenu1Item = subMenu1.getItem();
+        subMenu1Item.setIcon(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+    	
 	    return true;
 	  }
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case HOME:
+			Intent home = new Intent(getApplicationContext(), SmartNoteActivity.class);
+			startActivity(home);
+			break;
+		default:
+			break;
+		}
+		
+		return true;
+	}
 	
     private final class AnActionModeOfEpicProportions implements ActionMode.Callback {
         @Override
@@ -103,7 +139,7 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
             	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             
             menu.add(0, COPY, 0, "Copy")
-            	.setIcon(R.drawable.ic_menu_copy_light)
+            	.setIcon(R.drawable.ic_menu_share)
             	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
                         
@@ -113,6 +149,14 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
             
             menu.add(0, ALPHABETIZE, 0, "Alphabetize")
             	.setIcon(R.drawable.ic_menu_mark)
+            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            
+            menu.add(0, SWITCH_VIEW, 0, "Switch View")
+            	.setIcon(R.drawable.ic_menu_copy_light)
+            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            
+            menu.add(0, MANAGE_CARDS, 0, "Manage Cards")
+            	.setIcon(R.drawable.ic_menu_archive)
             	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             
             return true;
@@ -129,6 +173,7 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 			// TODO Auto-generated method stub
 			switch (item.getItemId()) {
 			case EDIT:
+				edit();
 				break;
 			case DELETE:
 				delete();
@@ -142,10 +187,19 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 			case ALPHABETIZE:
 				alphabetize();
 				break;
+			case SWITCH_VIEW:
+				SINGLE_VIEW = !SINGLE_VIEW;
+				displayCard();
+				break;
+			case MANAGE_CARDS:
+				Intent mCards = new Intent(getApplicationContext(), CardManager.class);
+				mCards.putExtra("stack", stack);
+				startActivity(mCards);
+				break;
 			default:
 				break;
 			}
-			            mode.finish();
+			mode.finish();
             return true;
 		}
 
@@ -157,19 +211,17 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
     }
     	
     private void initialize() {
+    	
+    	SINGLE_VIEW = false;
 		
 		Bundle extras = getIntent().getExtras();
 		stack = extras.getString("stack");
-		
-		SmartDBAdapter db = new SmartDBAdapter(this);
-		db.open();
 				
-		cardList = db.getItems(stack);
-		
-		db.close();
+		deck = new Deck(stack, this);
 		
 		titleTxt = (TextView)findViewById(R.id.titleTxt);
 		defTxt = (TextView)findViewById(R.id.defTxt);
+		indexTxt = (TextView)findViewById(R.id.index);
 				
 		flipper = (ViewFlipper)findViewById(R.id.cardFlipper);
 		
@@ -178,14 +230,26 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
         startActivityForResult(checkTTSIntent, MY_TTS_DATA_CHECK_CODE);
 	}
 	
-	private void getCard() {
+	private void displayCard() {
+		
+		try {		
+			CardModel card = deck.getCard();
+			
+			if (!SINGLE_VIEW) {
+				titleTxt.setText(card.getTitle());
+				defTxt.setText(card.getDef());	
+			}
+			else {
+				defTxt.setText(card.getTitle() + " - " + card.getDef());
+				titleTxt.setText(card.getTitle());
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		try {
-			String definition = cardList.get(cardListIndex).getDef();
-			String title = cardList.get(cardListIndex).getTitle();
-		
-			titleTxt.setText(title);
-			defTxt.setText(definition);
+		indexTxt.setText(deck.getIndex() +"/"+(deck.getSize()-1));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -197,54 +261,32 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		
 		titleTxt.setTypeface(chinacat);
 		defTxt.setTypeface(chinacat);
-	}
-	
-	/*Instead of creating two long functions, created a switch card function. 
-	 * True to go forward, false to go backwards. Has bounds checking also.
-	 */
-	public boolean changeCard(boolean forward) {
-		if (forward) {
-			if (cardListIndex < cardList.size()-1) {
-				cardListIndex++;
-			}
-			else {
-				Toast.makeText(getApplicationContext(), "End of the Deck", Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		} else {
-			if (cardListIndex > 0) {
-				cardListIndex--;
-			}
-			else {
-				Toast.makeText(getApplicationContext(), "Beginning of the Deck", Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		}
-		
-		getCard();
-		return true;
+		indexTxt.setTypeface(chinacat);
 	}
 	
 	public void moveForward(View view) {
-		changeCard(true);
+		if (deck.changeCard(true))
+			displayCard();
+		else
+			Toast.makeText(this, "End of Stack!", 100).show();
 	}
 	
 	public void moveBackward(View view) {
-		changeCard(false);
+		if (deck.changeCard(false))
+			displayCard();
+		else
+			Toast.makeText(this, "Beginning of Stack!", 100).show();
 	}
 	
 	/*For TTS*/
 	public void talk(View view) {
 		int flipperView = flipper.getDisplayedChild();
 		int flipperTitle = flipper.indexOfChild(titleTxt);
-		
-		String title = cardList.get(cardListIndex).getTitle();
-		String def = cardList.get(cardListIndex).getDef();
-		
+				
 		if (flipperTitle == flipperView)
-			readCard(title);
+			readCard(deck.getCard().getTitle());
 		else
-			readCard(def);
+			readCard(deck.getCard().getDef());
 		
 	}
 	
@@ -257,55 +299,31 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 	 * of cards.
 	 */
 	private void shuffle() {
-		Random rand1 = new Random();
-		
-		for (int i=0; i<cardList.size()*4; i++) {
-			int index1 = rand1.nextInt(cardList.size());
-			CardModel temp = new CardModel(cardList.get(index1));
-			int index2 = rand1.nextInt(cardList.size());
-			cardList.get(index1).copy(cardList.get(index2));
-			cardList.get(index2).copy(temp);
-		}
-		cardListIndex = 0;
-		getCard();
+		deck.shuffle();
+		displayCard();
 	}
 	
 	/*Deletes the current card. If this is the last card in the stack, then the 
 	 * stack is also deleted (because it is empty after this deletion).
 	 */
 	private void delete() {
-		
-		SmartDBAdapter db = new SmartDBAdapter(this);
-		db.open();
-		
-		try {
-			int success = db.deleteCard(cardList.get(cardListIndex));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		cardList.remove(cardListIndex);
-		if (changeCard(true)) {
-			getCard();
-		} else {
-			changeCard(false);
-			getCard();
-		}
-		
-		db.close();
-		
+		if (!deck.delete(this))
+			displayCard();
+		else
+			finish();
 	}
-	
 	/*Sorts the cards alphabetically based on the card's titles, and then resets 
 	 * the position back to the beginning. 
 	 */
 	private void alphabetize() {
-		Collections.sort(cardList, new CustomComparator());
-		cardListIndex = 0;
+		try {
+			deck.alphabetize();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		getCard();
+		displayCard();
 	}
-	 /*CustomComparator used to compare cards based on their titles*/
 	
 	private void copy() {
 		Intent intent = new Intent(this, StackMenu.class);
@@ -314,39 +332,43 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		startActivityForResult(intent, MY_STACK_DATA_CHECK_CODE);
 	}
 	
-	public class CustomComparator implements Comparator<CardModel> {
-
-		@SuppressLint("DefaultLocale")
-		@Override
-		public int compare(CardModel lhs, CardModel rhs) {
-			// TODO Auto-generated method stub
-			return lhs.getTitle().toLowerCase()
-					.compareTo(rhs.getTitle().toLowerCase());
-		}
+	private void edit() {
+		Intent intent = new Intent(this, CardEditor.class);
+		intent.putExtra("stack", stack);
+		CardModel card = new CardModel(deck.getCard());
+		intent.putExtra("Card", card);
 		
+		startActivityForResult(intent, MY_EDIT_DATA_CHECK_CODE);
 	}
-	
+		
 	/*Saves the position and view of the screen when the screen changes axis*/
 	public void onSaveInstanceState(Bundle savedInstanceState) {	
-		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());
-		savedInstanceState.putInt(LIST_POS, cardListIndex);
-		
+		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());		
 		super.onSaveInstanceState(savedInstanceState);
 	}
 	
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		int flipperPos = savedInstanceState.getInt(FLIP_TAB);
-		cardListIndex = savedInstanceState.getInt(LIST_POS);
-								
+		
+		int flipperPos = savedInstanceState.getInt(FLIP_TAB);						
 		flipper.setDisplayedChild(flipperPos);
 		
-		getCard();
+		try {
+			deck = (Deck) getLastNonConfigurationInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		displayCard();
+	}
+	
+	public Object onRetainNonConfigurationInstance() {
+	  	return deck;
 	}
 		
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 			super.onActivityResult(requestCode, resultCode, data);
-	        if (requestCode == MY_TTS_DATA_CHECK_CODE) {
+			
+	        if (requestCode == MY_TTS_DATA_CHECK_CODE && resultCode == RESULT_OK) {
 	            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 	                //the user has the necessary data - create the TTS
 	            myTTS = new TextToSpeech(this, this);
@@ -357,12 +379,13 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 	                startActivity(installTTSIntent);
 	            }
 	        }
+	        
 	        if(requestCode == MY_STACK_DATA_CHECK_CODE && resultCode == RESULT_OK) {
 	        	SmartDBAdapter db = new SmartDBAdapter(this);
 	        	db.open();
 	        	
-	        	String title = titleTxt.getText().toString();
-	        	String definition = defTxt.getText().toString();
+	        	String title = deck.getCard().getTitle();
+	        	String definition = deck.getCard().getDef();
 	        	String copyStacks = data.getStringExtra("stack");
 	        	String[] stacks = splitStacks(copyStacks);
 				
@@ -380,6 +403,15 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 						Toast.makeText(getApplicationContext(), "Not inserted in " + stacks[i],
 								500).show();
 				}	  
+	        }
+	        
+	        if(requestCode == MY_EDIT_DATA_CHECK_CODE && resultCode == RESULT_OK) {
+	        	CardModel card = data.getParcelableExtra("Card");
+	        	
+	        	deck.getCard().setTitle(card.getTitle());
+	        	deck.getCard().setDef(card.getDef());
+	        	
+	        	displayCard();    	
 	        }
     }
 	
@@ -400,7 +432,6 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 			Toast.makeText(getApplicationContext(), "Sorry...Text To Speech Error", Toast.LENGTH_SHORT).show();
 		}
 	}
-
 
 	@Override
 	public boolean onDown(MotionEvent e) {
@@ -425,11 +456,14 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		
 		if (finish.getRawY() > yBndLwr && finish.getRawY() < yBndUpr) {
 			if (finish.getRawX() > xBndUpr)
-				 changeCard(false);
-			 else if (finish.getRawX() < xBndLwr)
-				 changeCard(true);
+				 deck.changeCard(false);
+			else if (finish.getRawX() < xBndLwr)
+				 deck.changeCard(true);
+			displayCard();
 		} else if (finish.getRawY() < start.getRawY() + 150)
 			 flipper.showNext();
+		else if (start.getRawY() < finish.getRawY()-150)
+			flipper.showNext();
 		// TODO Auto-generated method stub
 		return true;
 	}

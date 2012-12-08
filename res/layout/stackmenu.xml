@@ -8,20 +8,21 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
 		android:weightSum="1">
+		<Button android:id = "@+id/cancel"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:text = "Cancel"
+		    android:textColor="#000"
+		    android:layout_weight = ".5"
+		    android:onClick = "cancel" />
 		<Button android:id ="@+id/addStacks" 
 		    android:layout_width="0dp"
 			android:layout_height="wrap_content" 
 			android:text="Add Stacks"
+			android:textColor="#000"
 			android:layout_weight = ".5"
 			android:onClick = "addStacks" />
-		<Button android:id = "@+id/cancel"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_toRightOf="@id/addStacks"
-		    android:text = "Cancel"
-		    android:layout_weight = ".5"
-		    android:onClick = "cancel" />
-	</LinearLayout>
+			</LinearLayout>
 	<ListView android:id="@android:id/list" 
 	    android:layout_width="fill_parent"
 		android:layout_height="fill_parent" 

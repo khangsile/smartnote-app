@@ -12,15 +12,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.example.smartnote.R;
 
-public class CardCreator extends Activity {
+public class CardCreator extends SherlockActivity {
 	
 	private SmartDBAdapter db;
 		
-	static final String TITLE = "mytitles";
-	static final String DEFINITION = "mydefinitions";
-	String definition = " ", title = " ", stack = " ";
+	private static final int HOME = 1;
+	
+	private String definition = " ", title = " ", stack = " ";
 	private EditText sInput, tInput, defInput;
 		
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,68 @@ public class CardCreator extends Activity {
 		
 	}
 	
+public boolean onCreateOptionsMenu(Menu menu) {
+		
+		menu.add(0, HOME, 0, "Home")
+    	.setIcon(R.drawable.ic_menu_home)
+    	.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		menu.add("Search")
+        .setIcon(R.drawable.ic_menu_search)
+        .setActionView(R.layout.collapsable_edit_text)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+    	
+    	SubMenu subMenu1 = menu.addSubMenu("Navigation");
+        subMenu1.add("Stacks Gallery")
+        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+				@Override
+				public boolean onMenuItemClick(MenuItem item) {
+					// TODO Auto-generated method stub
+					Intent sgIntent = new Intent(getApplicationContext(), StacksGallery.class);
+					startActivity(sgIntent);
+					return true;
+				}
+        		
+        	});
+        subMenu1.add("New Card")
+        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        		public boolean onMenuItemClick(MenuItem item) {
+					Intent ccIntent = new Intent(getApplicationContext(), CardCreator.class);
+					startActivity(ccIntent);
+        			return true;	
+        		}
+        	});
+        subMenu1.add("Download Stack")
+        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        		public boolean onMenuItemClick(MenuItem item) {
+        			//Intent dlIntent = new Intent(getApplicationContext(), )
+        			Toast.makeText(getApplicationContext(), "Feature in next version?", 250).show();
+        			return true;
+        		}
+        	});
+        		    	
+    	MenuItem subMenu1Item = subMenu1.getItem();
+        subMenu1Item.setIcon(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+    	
+	    return true;
+	  }
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case HOME:
+			Intent home = new Intent(getApplicationContext(), SmartNoteActivity.class);
+			startActivity(home);
+			break;
+		default:
+			break;
+		}
+		
+		return true;
+	}
+
 	public void onDestroy() {
 		super.onDestroy();
 		db.close();
@@ -63,7 +131,7 @@ public class CardCreator extends Activity {
 				
 		getText();
 						
-		if (title.isEmpty() || definition.isEmpty())
+		if (title.isEmpty() || definition.isEmpty() || stack.isEmpty())
 			Toast.makeText(getApplicationContext(), "Your card contains unwritten side(s)", Toast.LENGTH_SHORT).show();
 		else {
 			String[] stacks = splitStacks(stack);
@@ -153,7 +221,6 @@ public class CardCreator extends Activity {
 		super.onActivityResult(requestCode,resultCode,data);
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			if (data != null) {
-				Toast.makeText(this, "HERE", 500).show();
 				sInput.setText(data.getStringExtra("stack"));
 			}
 		}

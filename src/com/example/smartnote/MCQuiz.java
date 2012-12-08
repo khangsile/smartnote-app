@@ -1,10 +1,7 @@
 package com.example.smartnote;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,11 +17,13 @@ import android.widget.Toast;
 public class MCQuiz extends Activity {
 	
 	private String answer, stack;
-	private Queue<CardModel> cardQueue;
-	private List<CardModel> cardList, answers;
-	private TextView question;
+	private TextView question, indexTxt;
 	private RadioButton[] choices;
 	private int correct=0, atts=0;
+	
+	private List<CardModel> answers;
+	
+	private Deck deck;
 	
 	@SuppressWarnings("unchecked")
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,40 +31,28 @@ public class MCQuiz extends Activity {
 		setContentView(R.layout.mcquiz);
 		
 		initialize();
+		deck.shuffle();
 		
-		if (cardList.size() <= 4) {
+		if (deck.getSize() <= 4) {
 			Toast.makeText(getApplicationContext(), "Sorry! This feature requires \nmore than 4 cards in your deck.",500).show();
 			finish();
 		} else {
 			toChinaCat();
 			
-			cardQueue = (Queue<CardModel>) getLastNonConfigurationInstance();
-		    if (cardQueue == null) 
-		    	cardQueue = shuffle(new ArrayList<CardModel>(cardList));
+			displayCard();
 			
-			getCard();
-			
-			answers = new ArrayList<CardModel>();
-			getChoices(new ArrayList<CardModel>(cardList));
+			getChoices();
 		}
 	}
-	
-	public Object onRetainNonConfigurationInstance() {
-	    return cardQueue;
-	}
-	
+		
 	public void initialize() {
+		indexTxt = (TextView)findViewById(R.id.index);
+		
 		Bundle extras = getIntent().getExtras();
 		stack = extras.getString("stack");
 		
-		SmartDBAdapter db = new SmartDBAdapter(this);
-		db.open();
-			
-		cardList = new ArrayList<CardModel>();
-		cardList = db.getItems(stack);
-		
-		db.close();
-			
+		deck = new Deck(stack, this);
+					
 		question = (TextView) findViewById(R.id.question);
 		
 		choices = new RadioButton[4];
@@ -74,81 +61,59 @@ public class MCQuiz extends Activity {
 		choices[2] = (RadioButton) findViewById(R.id.c);
 		choices[3] = (RadioButton) findViewById(R.id.d);
 		
-		
+		answers = new ArrayList<CardModel>();
 	}
 	
 	private void toChinaCat() {
 		Typeface chinacat = Typeface.createFromAsset(getAssets(), "fonts/DroidSans-Bold.ttf");
-		choices[0].setTypeface(chinacat);
-		choices[1].setTypeface(chinacat);
-		choices[2].setTypeface(chinacat);
-		choices[3].setTypeface(chinacat);
+		for (int i=0; i<choices.length;i++)
+			choices[i].setTypeface(chinacat);
 		question.setTypeface(chinacat);
+		indexTxt.setTypeface(chinacat);
 			
 	}
 	
-	 private void update(boolean isCorrect) {
-	    	if (isCorrect) {
-	    		cardQueue.peek().correct();
+	private void update(boolean isCorrect) {
+			if (isCorrect) {
+	    		deck.getCard().correct();
 	    		correct++;
 	    		atts++;
 	    	} else {
-	    		cardQueue.peek().wrong();
+	    		deck.getCard().wrong();
 	    		atts++;
 	    	}
-	    	
 	    	SmartDBAdapter db = new SmartDBAdapter(this);
 	    	db.open();
 	    	
-	    	db.updateCard(cardQueue.peek());
+	    	db.updateCard(deck.getCard());
 	    	
 	    	db.close();
 	    }
+	
+	private void displayCard() {
+		
+		try {		
+			CardModel card = deck.getCard();
+			question.setText(card.getDef());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			indexTxt.setText(deck.getIndex()+"/"+(deck.getSize()-1));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	
-	/*Shuffles the cards and outputs an order for the cards to be quizzed in through
-	 * the use of a queue. This means that you cannot move backwards in the list
-	 * and the queue is fixed. 
-	 */
-	private Queue<CardModel> shuffle(List<CardModel> cardListCopy) {
-		Queue<CardModel> cardQueue = new LinkedList<CardModel>();
-		
-		for(int i = cardListCopy.size(); i > 1; i--) {
-			Random numberGen = new Random();
-			int shuffler = numberGen.nextInt(i);
-			cardQueue.add(cardListCopy.remove(shuffler));
-		}		
-		cardQueue.add(cardListCopy.get(0));
-		
-		return cardQueue;
-	}
-	
-	private void getCard() {
-		String definition = cardQueue.peek().getDef();
-		question.setText(definition);
-	}
-	
 	/*Gets the choices by randomly selecting four cards from the list*/
-	private void getChoices(List<CardModel> cardListCopy) {		
-		answers.add(cardQueue.peek());
+	private void getChoices() {		
+		answers = deck.getChoices();
 		
-		Random numGen = new Random();
-		for (int i=0;i<3;i++) {
-			int shuffle = numGen.nextInt(cardListCopy.size());
-			if (!cardListCopy.get(shuffle).getTitle().equals(answers.get(0).getTitle()))
-				answers.add(cardListCopy.remove(shuffle));
-			else
-				i--;
+		for (int i=0; i < answers.size(); i++)  {
+			choices[i].setText(answers.get(i).getTitle());
 		}
-		Queue<CardModel> mixAnswers = new LinkedList<CardModel>();
-		mixAnswers = shuffle(answers);
-		
-		for (int i=0; i < 3; i++) {
-			choices[i].setText(mixAnswers.remove().getTitle());
-		}
-		choices[3].setText(mixAnswers.peek().getTitle());
-		
-		answers.clear();
 	}
 	
 	public void onRadioButtonClicked(View view) {
@@ -157,36 +122,53 @@ public class MCQuiz extends Activity {
 	}
 	
 	public void mcAnswer(View view) {
-		if (cardQueue.size() > 1) {
-			if (answer.equals(cardQueue.peek().getTitle())) {
+		
+		try {
+			if (answer.equals(deck.getCard().getTitle())) {
 				Toast.makeText(getApplicationContext(), "Correct!", 500).show();
 				update(true);
-				cardQueue.remove();
 			} else {
-				Toast.makeText(getApplicationContext(), "Answer is " + 
-						cardQueue.peek().getTitle(), 500).show();
+				Toast.makeText(getApplicationContext(), "Answer is " + deck.getCard().getTitle(), 500).show();
 				update(false);
-				cardQueue.offer(cardQueue.remove());
-				} 
-			} else {
-				if (answer.equals(cardQueue.peek().getTitle())) {
-					update(true);
-				} else {
-					update(false);
-				}
-				SmartDBAdapter db = new SmartDBAdapter(this);
-				db.open();
+			} } catch (Exception e) {
+				e.printStackTrace();
+		}
+		
+		
+		if (!deck.changeCard(true)) {
+			SmartDBAdapter db = new SmartDBAdapter(this);
+			db.open();
 				
-				db.insertMCTest(correct, atts, stack);
+			db.insertMCTest(correct, atts, stack);
 				
-				db.close();
-				
-				finish();
-			}
-		getCard();
-		getChoices(new ArrayList<CardModel>(cardList));
+			finish();
+		}
+		
+		displayCard();
+		getChoices();
+		
 		RadioGroup rgButton = (RadioGroup)findViewById(R.id.rGroup);
-		rgButton.clearCheck();
+		rgButton.clearCheck(); 
+	}
+	
+	public Object onRetainNonConfigurationInstance() {
+	    return deck;
+	}
+	
+	public void onSaveInstanceState(Bundle savedInstanceState) {	
+		super.onSaveInstanceState(savedInstanceState);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		try {
+			deck = (Deck) getLastNonConfigurationInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		displayCard();									
 	}
 	
 	public void onBackPressed() {

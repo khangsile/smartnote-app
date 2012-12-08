@@ -12,9 +12,10 @@
  	android:layout_height="fill_parent" >
  
  		<TextView android:id="@+id/defTxt"
- 			android:paddingTop="50sp"
+ 			android:paddingTop="5sp"
  			android:layout_height="fill_parent"
  			android:layout_width="fill_parent"
+ 			android:layout_marginTop = "50sp"
  			android:text="Definitions"
  			android:textSize = "20sp"
  			android:textColor="#000000"
@@ -39,12 +40,12 @@
        android:layout_alignParentRight="true"
        android:background="#f5ff96">           
         <Button android:id="@+id/forward" 
-            android:layout_width="50dp"         
-            android:layout_height="50dp"
+            android:layout_width="55sp"         
+            android:layout_height="55sp"
             android:background = "#f5ff96" 
             android:onClick="moveForward"/>
-        <ImageView  android:layout_width="45dp"         
-            android:layout_height="45dp" 
+        <ImageView  android:layout_width="55sp"         
+            android:layout_height="55sp" 
             android:scaleType="fitXY" 
             android:src="@drawable/forwardarrow" />
     </FrameLayout> 
@@ -55,12 +56,12 @@
        android:layout_marginLeft = "5dp"
        android:background="#f5ff96">           
         <Button android:id="@+id/backward" 
-            android:layout_width="50dp"         
-            android:layout_height="50dp"
+            android:layout_width="55sp"         
+            android:layout_height="55sp"
             android:background = "#f5ff96" 
             android:onClick="moveBackward"/>
-        <ImageView  android:layout_width="45dp"         
-            android:layout_height="45dp" 
+        <ImageView  android:layout_width="55sp"         
+            android:layout_height="55sp" 
             android:scaleType="fitXY" 
             android:src="@drawable/backarrow" />
     </FrameLayout> 
@@ -70,18 +71,22 @@
        android:layout_centerHorizontal="true"
        android:background="#f5ff96">           
         <Button android:id="@+id/speak" 
-            android:layout_width="50dp"         
-            android:layout_height="50dp"
+            android:layout_width="55sp"         
+            android:layout_height="55sp"
             android:background = "#f5ff96" 
             android:onClick="talk"/>
-        <ImageView  android:layout_width="45dp"         
-            android:layout_height="45dp" 
+        <ImageView  android:layout_width="55sp"         
+            android:layout_height="55sp" 
             android:scaleType="fitXY" 
             android:src="@drawable/microphone" />
     </FrameLayout> 
     
+	<TextView android:id="@+id/index"
+	    android:layout_width = "wrap_content"
+	    android:layout_height = "wrap_content"
+	    android:textColor = "#000"
+	    android:layout_alignParentTop = "true"
+	    android:layout_alignParentRight = "true" />
    
-	
-  
 </RelativeLayout>
 

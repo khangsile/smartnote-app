@@ -7,63 +7,64 @@
     
     <TextView android:id = "@+id/quizNumber"
         android:layout_height = "wrap_content"
-        android:layout_width = "40sp"
+        android:layout_width = "wrap_content"
         android:layout_alignParentLeft = "true"
         android:text = "1"
         android:textSize = "45sp" />
-            
+    
+    <TextView android:id = "@+id/numCorrect"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+        android:layout_alignParentRight = "true"
+        android:layout_alignTop = "@id/quizNumber"
+        android:textSize = "15sp"
+        android:textColor = "#000" />
+    
+    
     <TextView android:id = "@+id/correct"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/quizNumber"
+        android:layout_toLeftOf = "@id/numCorrect"
         android:layout_alignTop = "@id/quizNumber"
         android:layout_marginLeft = "15sp"
         android:text = "Correct: "
         android:textSize = "15sp"
         android:textColor = "#000" />
     
-    <TextView android:id = "@+id/numCorrect"
+    <TextView android:id = "@+id/numAtts"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/correct"
-        android:layout_alignTop = "@id/correct"
+		android:layout_alignParentRight = "true"
+        android:layout_below = "@id/numCorrect"
         android:textSize = "15sp"
         android:textColor = "#000" />
-    
+        
     <TextView android:id = "@+id/attempts"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/quizNumber"
-        android:layout_below = "@id/correct"
-        android:layout_marginLeft = "15sp"
+		android:layout_toLeftOf = "@id/numAtts"
+		android:layout_alignTop = "@id/numAtts"
         android:text = "Attempts: " 
         android:textSize = "15sp"
         android:textColor = "#000" />
     
-     <TextView android:id = "@+id/numAtts"
+      <TextView android:id = "@+id/gradePct"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/attempts"
-        android:layout_alignTop = "@id/attempts"
+		android:layout_alignParentRight = "true"
+        android:layout_below = "@id/numAtts"
         android:textSize = "15sp"
         android:textColor = "#000" />
     
+        
     <TextView android:id = "@+id/grade"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/quizNumber"
-        android:layout_below = "@id/attempts"
-        android:layout_marginLeft = "15sp"
+		android:layout_toLeftOf="@id/gradePct"
+		android:layout_alignTop = "@id/gradePct"
         android:text = "Grade: "
         android:textSize = "15sp"
         android:textColor = "#000" />
     
-     <TextView android:id = "@+id/gradePct"
-        android:layout_height = "wrap_content"
-        android:layout_width = "wrap_content"
-        android:layout_toRightOf = "@id/grade"
-        android:layout_alignTop = "@id/grade"
-        android:textSize = "15sp"
-        android:textColor = "#000" />
-
+   
 </RelativeLayout>

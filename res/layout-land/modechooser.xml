@@ -31,6 +31,7 @@
             android:layout_marginTop = "15sp"
             android:layout_centerInParent = "true"
             android:onClick="toMemQuiz"
+            android:textColor="#000"
             android:text="Memory Quiz" />
 
         <Button
@@ -40,6 +41,7 @@
             android:layout_toLeftOf="@id/memQuiz"
             android:layout_alignBaseline = "@id/memQuiz"
             android:onClick="toReview"
+            android:textColor="#000"
             android:text="Review Mode" />
 
         <Button
@@ -49,6 +51,7 @@
             android:layout_toRightOf="@id/memQuiz"
             android:layout_alignBaseline = "@id/memQuiz"
             android:onClick="toMcQuiz"
+            android:textColor="#000"
             android:text="Multiple Choice" />
 
   <!--   </RelativeLayout> -->

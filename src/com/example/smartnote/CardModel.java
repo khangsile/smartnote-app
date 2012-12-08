@@ -1,6 +1,9 @@
 package com.example.smartnote;
 
-public class CardModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class CardModel implements Parcelable {
 	
 	private String title;
 	private String definition;
@@ -22,6 +25,11 @@ public class CardModel {
 		this.definition = card.getDef();
 		this.id = card.getId();
 		this.stack = card.getStack();
+		this.selected = false;
+	}
+	
+	public CardModel(Parcel in) {
+		readFromParcel(in);
 	}
 	
 	public void copy (CardModel card) {
@@ -88,6 +96,50 @@ public class CardModel {
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+	
+	public boolean equals (Object o) {
+	    CardModel x = (CardModel) o;
+	        if (x.title == title && x.definition == definition) return true;
+	        return false;
+	    }
+	
+	
+    public static final Parcelable.Creator<CardModel> CREATOR = new Parcelable.Creator<CardModel>() {
+        public CardModel createFromParcel(Parcel in) {
+            return new CardModel(in);
+        }
+
+        public CardModel[] newArray(int size) {
+            return new CardModel[size];
+        }
+    };
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub
+		dest.writeString(title);
+		dest.writeString(definition);
+		dest.writeInt(stack);
+		dest.writeInt(hits);
+		dest.writeInt(attempts);
+		dest.writeInt(id);
+	}
+	
+	public void readFromParcel(Parcel in) {
+		title = in.readString();
+		definition = in.readString();
+		stack = in.readInt();
+		hits = in.readInt();
+		attempts = in.readInt();
+		id = in.readInt();
+		selected = false;
 	}
 
 }

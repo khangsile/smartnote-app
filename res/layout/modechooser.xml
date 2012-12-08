@@ -26,12 +26,14 @@
             android:layout_width = "wrap_content"
 			android:layout_centerInParent = "true"
             android:text = "Multiple Choice"
+            android:textColor = "#000"
             android:onClick="toMcQuiz" />
     <Button android:id="@+id/memQuiz"
         	android:layout_height = "wrap_content"
         	android:layout_width = "wrap_content"
         	android:layout_below = "@id/mcQuiz"
         	android:layout_centerHorizontal = "true"
+        	android:textColor = "#000"
         	android:text = "Memory Quiz"
         	android:onClick = "toMemQuiz" />
     <Button android:id="@+id/review"
@@ -39,6 +41,7 @@
             android:layout_width = "wrap_content"
             android:layout_above = "@id/mcQuiz"
             android:layout_centerHorizontal = "true"
+        	android:textColor = "#000"          
             android:text = "Review Mode"
             android:onClick = "toReview" />    
     
