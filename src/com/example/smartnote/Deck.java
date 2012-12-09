@@ -1,5 +1,7 @@
 package com.example.smartnote;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -130,6 +132,52 @@ public class Deck {
 		return result;	
 	}
 	
+	@SuppressLint("DefaultLocale")
+	public boolean findCard(String query) {
+		
+		if (isNumeric(query)) {
+			int newIndex;
+			try {
+				newIndex = Integer.parseInt(query);
+				if (newIndex < getSize() && newIndex >= 0) {
+					index = newIndex;
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		for (int i=0; i < cards.size(); i++) {
+			String title = cards.get(i).getTitle().toLowerCase();
+			String def = cards.get(i).getDef().toLowerCase();
+			query = query.toLowerCase().trim();
+			
+			if (title.matches(query)|| def.matches(query)) {
+				index = i;
+				return true;
+			}	
+		}
+		
+		for (int i=0; i < cards.size(); i++) {
+			String title = cards.get(i).getTitle().toLowerCase();
+			String def = cards.get(i).getDef().toLowerCase();
+			query = query.toLowerCase();
+			
+			if (title.contains(query)|| def.contains(query)) {
+				index = i;
+				return true;
+			}	
+		}
+		
+		return false;	
+	}
+	
+	public void moveTo(CardModel card) {
+		int newIndex = cards.indexOf(card);
+		index = newIndex;
+	}
+	
 	private void dShuffle(List<CardModel> list) {
 		Random generator = new Random();
 		for(int i=0; i<4*list.size();i++) {
@@ -141,5 +189,11 @@ public class Deck {
 			list.get(index2).copy(temp);
 		}		
 	}
-
+	
+	public static boolean isNumeric(String str) {
+	  NumberFormat formatter = NumberFormat.getInstance();
+	  ParsePosition pos = new ParsePosition(0);
+	  formatter.parse(str, pos);
+	  return str.length() == pos.getIndex();
+	}
 }

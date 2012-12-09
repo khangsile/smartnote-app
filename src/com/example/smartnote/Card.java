@@ -7,6 +7,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.widget.SearchView;
+import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,8 +17,12 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -25,6 +31,7 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 	private GestureDetector gestureDetector;
 			
 	private static final String FLIP_TAB = "flipperTab";
+	private static final String VIEW = "view";
 	private String stack;
 	
 	private int MY_TTS_DATA_CHECK_CODE = 0;
@@ -70,11 +77,33 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
     	.setIcon(R.drawable.ic_menu_home)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
+		SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+		searchView.setQueryHint("Search");
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// TODO Auto-generated method stub
+				if (deck.findCard(query))
+					displayCard();
+				else
+					Toast.makeText(getApplicationContext(), "Match not found!", 250).show();
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+		});
+		
 		menu.add("Search")
         .setIcon(R.drawable.ic_menu_search)
-        .setActionView(R.layout.collapsable_edit_text)
+        .setActionView(searchView)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-    	
+		
     	SubMenu subMenu1 = menu.addSubMenu("Navigation");
         subMenu1.add("Stacks Gallery")
         	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
@@ -219,6 +248,11 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 				
 		deck = new Deck(stack, this);
 		
+		if (extras.containsKey("card")) {
+			CardModel card = (CardModel) extras.getParcelable("card");
+			deck.moveTo(card);
+		}
+		
 		titleTxt = (TextView)findViewById(R.id.titleTxt);
 		defTxt = (TextView)findViewById(R.id.defTxt);
 		indexTxt = (TextView)findViewById(R.id.index);
@@ -283,15 +317,21 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		int flipperView = flipper.getDisplayedChild();
 		int flipperTitle = flipper.indexOfChild(titleTxt);
 				
-		if (flipperTitle == flipperView)
-			readCard(deck.getCard().getTitle());
-		else
-			readCard(deck.getCard().getDef());
-		
+		if (flipperTitle == flipperView) {
+			String title = titleTxt.getText().toString();
+			readCard(title);
+		} else {
+			String def = defTxt.getText().toString();
+			readCard(def);
+		}
 	}
 	
 	private void readCard(String phrase) {
+		try {
 		myTTS.speak(phrase, TextToSpeech.QUEUE_FLUSH, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/*Basic shuffle which generates two random numbers that signify deck positions and switches them.
@@ -343,7 +383,8 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		
 	/*Saves the position and view of the screen when the screen changes axis*/
 	public void onSaveInstanceState(Bundle savedInstanceState) {	
-		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());		
+		savedInstanceState.putInt(FLIP_TAB, flipper.getDisplayedChild());	
+		savedInstanceState.putBoolean(VIEW, SINGLE_VIEW);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 	
@@ -352,6 +393,7 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 		
 		int flipperPos = savedInstanceState.getInt(FLIP_TAB);						
 		flipper.setDisplayedChild(flipperPos);
+		SINGLE_VIEW = savedInstanceState.getBoolean(VIEW);
 		
 		try {
 			deck = (Deck) getLastNonConfigurationInstance();
@@ -368,7 +410,7 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 			super.onActivityResult(requestCode, resultCode, data);
 			
-	        if (requestCode == MY_TTS_DATA_CHECK_CODE && resultCode == RESULT_OK) {
+	        if (requestCode == MY_TTS_DATA_CHECK_CODE) {
 	            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 	                //the user has the necessary data - create the TTS
 	            myTTS = new TextToSpeech(this, this);
@@ -499,8 +541,13 @@ public class Card extends SherlockActivity implements OnInitListener, OnGestureL
 
 	public boolean onTouchEvent(MotionEvent me) {
 		return gestureDetector.onTouchEvent(me);
-		}
-
+	}
+	
+	public void onBackPressed() {
+		Intent intent = new Intent(this, ModeChooser.class);
+		intent.putExtra("stack", stack);
+		startActivity(intent);
+	}
 	
 }
 

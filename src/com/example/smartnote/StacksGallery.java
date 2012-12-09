@@ -15,10 +15,12 @@ import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StacksGallery extends SherlockListActivity {
@@ -30,7 +32,15 @@ public class StacksGallery extends SherlockListActivity {
 		setTitle("Your Stacks");
 		setContentView(R.layout.stacksgallery);
 			
-		StacksGallArrayAdapter adapter = new StacksGallArrayAdapter(this, getMenuItems());
+		
+		List<Model> list = new ArrayList<Model>(getMenuItems());
+		StacksGallArrayAdapter adapter = new StacksGallArrayAdapter(this, list);
+		
+		TextView header = (TextView)findViewById(R.id.stacks);
+		header.setText(list.size() + " Stacks");
+		
+    	Typeface chinacat = Typeface.createFromAsset(getAssets(), "fonts/DroidSans-Bold.ttf");
+    	header.setTypeface(chinacat);
 		
 		setListAdapter(adapter);
 						
@@ -118,6 +128,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
 		db.close();
 		
 		Collections.sort(list, new CustomComparator());
+		
 		return list;
 	}
 	

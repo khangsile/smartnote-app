@@ -100,7 +100,7 @@ public class CardModel implements Parcelable {
 	
 	public boolean equals (Object o) {
 	    CardModel x = (CardModel) o;
-	        if (x.title == title && x.definition == definition) return true;
+	        if (x.title.equals(title) && x.definition.equals(definition)) return true;
 	        return false;
 	    }
 	

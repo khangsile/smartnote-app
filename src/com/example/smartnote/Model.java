@@ -1,6 +1,9 @@
 package com.example.smartnote;
 
-public class Model {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Model implements Parcelable {
 	
 	private String name;
 	private boolean selected;
@@ -10,6 +13,10 @@ public class Model {
 		this.name = name;
 		this.count = count;
 		selected = false;
+	}
+	
+	public Model(Parcel in) {
+		readFromParcelable(in);
 	}
 	
 	public String getName() {
@@ -34,6 +41,38 @@ public class Model {
 	
 	public long getCount() {
 		return count;
+	}
+	
+	 public static final Parcelable.Creator<Model> CREATOR = new Parcelable.Creator<Model>() {
+
+	      public Model createFromParcel(Parcel source) {
+	         return new Model(source);
+	      }
+
+	      public Model[] newArray(int size) {
+	         return new Model[size];
+	      }
+
+	   };
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub		
+		dest.writeString(name);
+		dest.writeLong(count);
+		
+	}
+	
+	private void readFromParcelable(Parcel in) {
+		name = in.readString();
+		selected = false;
+		count = in.readLong();
 	}
 
 }

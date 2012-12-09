@@ -139,36 +139,48 @@ public class SmartDBAdapter {
     	smartdb.close();
     }
     
-    public long insertCard(String title, String definition, String stack) {
-    	int stackID = getStackID(stack);
+    public List<CardModel> searchCards(String query) {
+    	Cursor cursor = db.query(CARD_TABLE, new String[] {ROW_ID, TITLE, DEFINITION, STACK, HITS, ATTEMPTS},
+    			TITLE + " LIKE '" + query + "%'", null, null, null, null);
+    	cursor.moveToFirst();
     	
-    	ContentValues values = new ContentValues();
-    	values.put(STACK, stackID);
-    	values.put(TITLE, title);
-    	values.put(DEFINITION, definition);
-    	values.put(HITS, 0);
-    	values.put(ATTEMPTS, 0);
-    	return db.insert(CARD_TABLE, null, values);
-    }
-    
-    public long insertCard(String title, String definition, int stackID) {    	
-    	ContentValues values = new ContentValues();
-    	values.put(STACK, stackID);
-    	values.put(TITLE, title);
-    	values.put(DEFINITION, definition);
-    	values.put(HITS, 0);
-    	values.put(ATTEMPTS, 0);
-    	return db.insert(CARD_TABLE, null, values);
-    }
-
-    
-    public long insertStack(String newStack) {
-    	ContentValues values = new ContentValues();
-    	values.put(STACK_NAME, newStack);
+    	List<CardModel> cards = new ArrayList<CardModel>();
     	
-    	return db.insert(STACK_TABLE, STACK_ID, values);
+    	while (!cursor.isAfterLast()) {
+			
+			String title = cursor.getString(cursor.getColumnIndex(TITLE));
+			String definition = cursor.getString(cursor.getColumnIndex(DEFINITION));
+			int id = cursor.getInt(cursor.getColumnIndex(ROW_ID));
+			int stackID = cursor.getInt(cursor.getColumnIndex(STACK));
+			int hits = cursor.getInt(cursor.getColumnIndex(HITS));
+			int att = cursor.getInt(cursor.getColumnIndex(ATTEMPTS));
+			cards.add(new CardModel(title, definition, id, stackID, hits, att));
+			
+			cursor.moveToNext();
+		}
+    	
+    	return cards;
     }
     
+    public List<Model> searchStacks(String query) {
+    	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_ID, STACK_NAME},
+    			STACK_NAME + " LIKE '" + query + "%'", null, null, null, null);
+    	cursor.moveToFirst();
+    	
+    	List<Model> stacks = new ArrayList<Model>();
+    	
+    	while (!cursor.isAfterLast()) {
+			
+			String stack = cursor.getString(cursor.getColumnIndex(STACK_NAME));
+			long count = getStackSize(stack);
+			stacks.add(new Model(stack, count));
+			
+			cursor.moveToNext();
+		}
+    	
+    	return stacks;
+    }
+       
     public boolean matchCard(String title, String definition, String stackName) {
     	int stackID = getStackID(stackName);
     	Cursor cursor = db.query(CARD_TABLE, new String[] { TITLE }, 
@@ -205,14 +217,33 @@ public class SmartDBAdapter {
     	return false;
     }
     
+    public String getStackName(int stackID) {
+    	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_NAME}, 
+    			STACK_ID +"=?", new String[] {String.valueOf(stackID)}, null, null, null);
+    	
+    	cursor.moveToFirst();
+    	return cursor.getString(cursor.getColumnIndex(STACK_NAME));
+    }
+    
     public int getStackID(String stackName) {
-    	SQLiteDatabase db = smartdb.getReadableDatabase();
     	Cursor cursor = db.query(STACK_TABLE, new String[]{STACK_ID + " as _id", STACK_NAME}, 
     			STACK_NAME + "=?",  new String[] {stackName}, null, null, null); 
     	    	    		
     	cursor.moveToFirst();
         return cursor.getInt(cursor.getColumnIndex("_id"));
     	 
+    }
+    
+
+    
+    public long getStackSize(String stack) {
+    	int stackID = getStackID(stack);
+    	String query = "SELECT COUNT(*) FROM " + CARD_TABLE + " WHERE " +
+    			STACK + " = " + String.valueOf(stackID);
+    	SQLiteStatement statement = db.compileStatement(query);
+    	long count = statement.simpleQueryForLong();
+    	
+    	return count;
     }
     
     public List<CardModel> getItems(String stack) {
@@ -239,17 +270,19 @@ public class SmartDBAdapter {
 			
 		List<CardModel> cardList = new ArrayList<CardModel>();
 		
-		while (!cursor.isAfterLast()) {
+		if (cursor != null && cursor.getCount()>0) {
 			
-			String title = cursor.getString(titleIndex);
-			String definition = cursor.getString(defIndex);
-			int id = cursor.getInt(idIndex);
-			int stackID = cursor.getInt(stackIndex);
-			int hits = cursor.getInt(hitIndex);
-			int att = cursor.getInt(attIndex);
-			cardList.add(new CardModel(title, definition, id, stackID, hits, att));
+			while (!cursor.isAfterLast()) {
+				String title = cursor.getString(titleIndex);
+				String definition = cursor.getString(defIndex);
+				int id = cursor.getInt(idIndex);
+				int stackID = cursor.getInt(stackIndex);
+				int hits = cursor.getInt(hitIndex);
+				int att = cursor.getInt(attIndex);
+				cardList.add(new CardModel(title, definition, id, stackID, hits, att));
 			
-			cursor.moveToNext();
+				cursor.moveToNext();
+			}
 		}
 		return cardList;
     }
@@ -278,17 +311,7 @@ public class SmartDBAdapter {
 		
 		return list;
     }
-    
-    public long getStackSize(String stack) {
-    	int stackID = getStackID(stack);
-    	String query = "SELECT COUNT(*) FROM " + CARD_TABLE + " WHERE " +
-    			STACK + " = " + String.valueOf(stackID);
-    	SQLiteStatement statement = db.compileStatement(query);
-    	long count = statement.simpleQueryForLong();
-    	
-    	return count;
-    }
-    
+        
     public List<Quiz> getMemQuiz(String stack) {
  
     	int stackID = getStackID(stack);
@@ -380,6 +403,36 @@ public class SmartDBAdapter {
     	cv.put(ATTEMPTS, attempts);
     	cv.put(STACK, stackID);
     	return db.insert(MEM_STATS_TABLE, null, cv);
+    }
+
+    public long insertCard(String title, String definition, String stack) {
+    	int stackID = getStackID(stack);
+    	
+    	ContentValues values = new ContentValues();
+    	values.put(STACK, stackID);
+    	values.put(TITLE, title);
+    	values.put(DEFINITION, definition);
+    	values.put(HITS, 0);
+    	values.put(ATTEMPTS, 0);
+    	return db.insert(CARD_TABLE, null, values);
+    }
+    
+    public long insertCard(String title, String definition, int stackID) {    	
+    	ContentValues values = new ContentValues();
+    	values.put(STACK, stackID);
+    	values.put(TITLE, title);
+    	values.put(DEFINITION, definition);
+    	values.put(HITS, 0);
+    	values.put(ATTEMPTS, 0);
+    	return db.insert(CARD_TABLE, null, values);
+    }
+
+    
+    public long insertStack(String newStack) {
+    	ContentValues values = new ContentValues();
+    	values.put(STACK_NAME, newStack);
+    	
+    	return db.insert(STACK_TABLE, STACK_ID, values);
     }
 
 }

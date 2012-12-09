@@ -7,32 +7,32 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
 @SuppressWarnings("deprecation")
-public class QuizHistory extends ActivityGroup {
+public class SmartSearchView extends ActivityGroup {
 	
-	private String stack;
+	private String query;
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.quizhistorytab);
 		
 		Bundle extras = getIntent().getExtras();
-		stack = extras.getString("stack");
-		setTitle(stack+ " Quiz History");
+		query = extras.getString("query");
+		setTitle("Search Results");
 		
 		TabHost th = (TabHost) findViewById(R.id.quizHistoryTabhost);
 		th.setup(getLocalActivityManager());
 		Intent intent;
 		
-		TabSpec tabSpec = th.newTabSpec("mcQuiz");
-		intent = new Intent().setClass(this, McHistory.class);
-		intent.putExtra("stack", stack);
-		tabSpec.setIndicator("Multiple Choice").setContent(intent);
+		TabSpec tabSpec = th.newTabSpec("cardRes");
+		intent = new Intent().setClass(this, CardSearch.class);
+		intent.putExtra("query", query);
+		tabSpec.setIndicator("Card Results").setContent(intent);
 		th.addTab(tabSpec);
 		
-		tabSpec = th.newTabSpec("memQuiz");
-		intent = new Intent().setClass(this, MemHistory.class);
-		intent.putExtra("stack", stack);
-		tabSpec.setIndicator("Memory").setContent(intent);
+		tabSpec = th.newTabSpec("stackRes");
+		intent = new Intent().setClass(this, StackSearch.class);
+		intent.putExtra("query", query);
+		tabSpec.setIndicator("Stack Results").setContent(intent);
 		th.addTab(tabSpec);
 	}
 	

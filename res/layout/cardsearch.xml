@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f5ff96" >
+    
+        
+      <TextView android:id = "@+id/title"
+        android:layout_height = "wrap_content"
+        android:layout_width = "225sp"
+        android:layout_alignParentLeft = "true"
+        android:singleLine="true"
+        android:text = "My New Title"
+        android:textColor = "#000"
+        android:textSize = "25sp" />
+      
+      <TextView android:id = "@+id/definition"
+          android:layout_height = "wrap_content"
+          android:layout_width = "200sp"
+          android:layout_alignParentLeft = "true"
+          android:layout_below = "@id/title"
+          android:text = "Definition"
+          android:textColor = "#000"
+          android:textSize = "13sp"
+          android:singleLine = "true" />
+                   
+     <TextView android:id = "@+id/stack"
+        android:layout_height = "wrap_content"
+        android:layout_width = "wrap_content"
+		android:layout_alignParentRight = "true"
+        android:layout_alignTop = "@id/definition"
+        android:text = "Stack"
+        android:textSize = "13sp"
+        android:textColor = "#000" />
+    
+</RelativeLayout>
