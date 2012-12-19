@@ -43,7 +43,7 @@
         <activity android:name = "com.example.smartnote.MemHistory" />
         <activity android:name = "com.example.smartnote.McHistory" />
         <activity android:name = "com.example.smartnote.Test"/>
-        <activity android:name = "com.example.smartnote.ModeChooser" />
+        <activity android:name = "com.example.smartnote.ModeChooser" android:uiOptions = "splitActionBarWhenNarrow" />
         <activity android:name = "com.example.smartnote.CardManager"/>
         <activity android:name = "com.example.smartnote.CardEditor" />
         <activity android:name = "com.example.smartnote.SmartSearchView" />

@@ -1,8 +1,5 @@
 package com.example.smartnote;
 
-import android.app.Activity;
-
-
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -18,6 +15,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
+import com.actionbarsherlock.widget.SearchView;
+import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.example.smartnote.R;
 
 public class CardCreator extends SherlockActivity {
@@ -66,9 +65,32 @@ public boolean onCreateOptionsMenu(Menu menu) {
     	.setIcon(R.drawable.ic_menu_home)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
+		SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+		searchView.setQueryHint("Search");
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(getApplicationContext(), SmartSearchView.class);
+				intent.putExtra("query", query);
+				
+				startActivity(intent);
+				
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+		});
+		
 		menu.add("Search")
         .setIcon(R.drawable.ic_menu_search)
-        .setActionView(R.layout.collapsable_edit_text)
+        .setActionView(searchView)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
     	
     	SubMenu subMenu1 = menu.addSubMenu("Navigation");

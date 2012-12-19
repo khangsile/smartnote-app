@@ -1,7 +1,5 @@
 package com.example.smartnote;
 
-import java.util.List;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -11,13 +9,11 @@ import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class SmartNoteActivity extends SherlockActivity {
 
@@ -115,16 +111,8 @@ public boolean onCreateOptionsMenu(Menu menu) {
         			return true;	
         		}
         	});
-        subMenu1.add("Download Stack")
-        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-        		public boolean onMenuItemClick(MenuItem item) {
-        			//Intent dlIntent = new Intent(getApplicationContext(), )
-        			Toast.makeText(getApplicationContext(), "Feature in next version?", 250).show();
-        			return true;
-        		}
-        	});
-        		    	
-    	MenuItem subMenu1Item = subMenu1.getItem();
+        
+        MenuItem subMenu1Item = subMenu1.getItem();
         subMenu1Item.setIcon(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 

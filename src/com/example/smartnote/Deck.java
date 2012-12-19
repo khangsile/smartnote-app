@@ -32,6 +32,10 @@ public class Deck {
 		index = 0;
 	}
 	
+	public List<CardModel> getCards() {
+		return cards;
+	}
+	
 	public int getSize() {
 		return cards.size();
 	}
