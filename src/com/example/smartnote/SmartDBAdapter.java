@@ -20,6 +20,7 @@ public class SmartDBAdapter {
 	public static final String STACK_TABLE = "Stacks";
 	public static final String STACK_ID = "stackID";
 	public static final String STACK_NAME = "stackName";
+	public static final String STACK_DATE = "stackDate";
 	public static final String ROW_ID = "_id";
 	public static final String HITS = "hits";
 	public static final String ATTEMPTS = "attempts";
@@ -27,7 +28,7 @@ public class SmartDBAdapter {
 	public static final String MC_STATS_TABLE = "McStats";
 	
 	public static final String DB_NAME = "db_notecard";
-	public static final int DB_VER = 8;
+	public static final int DB_VER = 10;
 	
 	private static final String CARD_CREATE = "CREATE TABLE Cards (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			"title TEXT NOT NULL, definition TEXT NOT NULL, " + "hits INTEGER NOT NULL, " + 
@@ -35,7 +36,7 @@ public class SmartDBAdapter {
 			",FOREIGN KEY (deck) REFERENCES " + STACK_TABLE + " (stackID));";
 	
 	private static final String STACK_CREATE = "Create TABLE " + STACK_TABLE + " (stackID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-			STACK_NAME + " TEXT NOT NULL);";
+			STACK_NAME + " TEXT NOT NULL, " + STACK_DATE + " TEXT NOT NULL);";
 	
 	private static final String MC_STATS_CREATE = "CREATE TABLE McStats (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			"hits INTEGER NOT NULL, attempts INTEGER NOT NULL, deck INTEGER NOT NULL , FOREIGN KEY " +
@@ -105,6 +106,8 @@ public class SmartDBAdapter {
 		public void onUpgrade(SQLiteDatabase db, int oldVers, int newVers) {
 			db.execSQL("DROP TABLE IF EXISTS " + CARD_TABLE);
 			db.execSQL("DROP TABLE IF EXISTS " + STACK_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + MC_STATS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + MEM_STATS_TABLE);
 			
 			db.execSQL("DROP VIEW IF EXISTS " + VIEW_CARDS);
 			onCreate(db);
@@ -172,8 +175,9 @@ public class SmartDBAdapter {
     	while (!cursor.isAfterLast()) {
 			
 			String stack = cursor.getString(cursor.getColumnIndex(STACK_NAME));
+			String date = cursor.getString(cursor.getColumnIndex(STACK_DATE));
 			long count = getStackSize(stack);
-			stacks.add(new Model(stack, count));
+			stacks.add(new Model(stack, count, date));
 			
 			cursor.moveToNext();
 		}
@@ -288,23 +292,25 @@ public class SmartDBAdapter {
     }
     
     public List<Model> getStacks() {
-    	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_ID, STACK_NAME}, null, 
+    	Cursor cursor = db.query(STACK_TABLE, new String[] {STACK_ID, STACK_NAME, STACK_DATE}, null, 
     			null, null, null, null);
     	
 		int stackNameIndex = cursor.getColumnIndex(STACK_NAME);
+		int stackDateIndex = cursor.getColumnIndex(STACK_DATE);
 		cursor.moveToFirst();
 		
 		List<Model> list = new ArrayList<Model>();
 		
 		while(!cursor.isAfterLast()) {
 			String name = cursor.getString(stackNameIndex);
+			String date = cursor.getString(stackDateIndex);
 			long count = 0;
 			try {
 				count = getStackSize(name);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			list.add(new Model(name, count));
+			list.add(new Model(name, count, date));
 			
 			cursor.moveToNext();
 		}
@@ -428,9 +434,10 @@ public class SmartDBAdapter {
     }
 
     
-    public long insertStack(String newStack) {
+    public long insertStack(String newStack, String date) {
     	ContentValues values = new ContentValues();
     	values.put(STACK_NAME, newStack);
+    	values.put(STACK_DATE, date);
     	
     	return db.insert(STACK_TABLE, STACK_ID, values);
     }

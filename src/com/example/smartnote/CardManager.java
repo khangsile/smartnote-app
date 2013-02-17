@@ -233,14 +233,7 @@ public class CardManager extends SherlockListActivity {
         			return true;	
         		}
         	});
-        subMenu1.add("Download Stack")
-        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-        		public boolean onMenuItemClick(MenuItem item) {
-        			//Intent dlIntent = new Intent(getApplicationContext(), )
-        			Toast.makeText(getApplicationContext(), "Feature in next version?", 250).show();
-        			return true;
-        		}
-        	});
+       
         		    	
     	MenuItem subMenu1Item = subMenu1.getItem();
         subMenu1Item.setIcon(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);

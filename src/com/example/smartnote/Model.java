@@ -8,10 +8,12 @@ public class Model implements Parcelable {
 	private String name;
 	private boolean selected;
 	private long count;
+	private String date;
 	
-	public Model(String name, long count) {
+	public Model(String name, long count, String date) {
 		this.name = name;
 		this.count = count;
+		this.date = date;
 		selected = false;
 	}
 	
@@ -41,6 +43,10 @@ public class Model implements Parcelable {
 	
 	public long getCount() {
 		return count;
+	}
+	
+	public String getDate() {
+		return date;
 	}
 	
 	 public static final Parcelable.Creator<Model> CREATOR = new Parcelable.Creator<Model>() {

@@ -1,5 +1,7 @@
 package com.example.smartnote;
 
+import java.util.Date;
+
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -114,14 +116,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
         			return true;	
         		}
         	});
-        subMenu1.add("Download Stack")
-        	.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-        		public boolean onMenuItemClick(MenuItem item) {
-        			//Intent dlIntent = new Intent(getApplicationContext(), )
-        			Toast.makeText(getApplicationContext(), "Feature in next version?", 250).show();
-        			return true;
-        		}
-        	});
+        
         		    	
     	MenuItem subMenu1Item = subMenu1.getItem();
         subMenu1Item.setIcon(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
@@ -182,7 +177,9 @@ public boolean onCreateOptionsMenu(Menu menu) {
 	public void insertStacks(String[] stacks) {
 		for (String sName:stacks) {
 			if (!sName.equals("") && !db.matchStack(sName)) {
-				db.insertStack(sName);
+				Date date = new Date();
+				String today = date.toString();
+				db.insertStack(sName, today);
 			}
 		}
 	}

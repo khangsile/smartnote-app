@@ -23,7 +23,7 @@ public class StacksGallArrayAdapter extends ArrayAdapter<Model> implements Secti
 	}
 	
 	static class ViewHolder {
-	    public TextView title, count;
+	    public TextView title, count, date;
 	  }
 
 	
@@ -35,20 +35,21 @@ public class StacksGallArrayAdapter extends ArrayAdapter<Model> implements Secti
 	      ViewHolder viewHolder = new ViewHolder();
 	      viewHolder.title = (TextView) rowView.findViewById(R.id.stack);
 	      viewHolder.count = (TextView) rowView.findViewById(R.id.count);
+	      viewHolder.date = (TextView)rowView.findViewById(R.id.difficulty);
 	      rowView.setTag(viewHolder);
 	    }
 	    
 	    ViewHolder holder = (ViewHolder) rowView.getTag();
 	    holder.title.setText(list.get(position).getName() + "");
 	    holder.count.setText(list.get(position).getCount() + "");
+	    holder.date.setText(list.get(position).getDate() + "");
 	    	    	    
 	    Typeface chinacat = Typeface.createFromAsset(holder.title.getContext()
 	            .getAssets(), "fonts/DroidSans-Bold.ttf");
 	    
 	    holder.title.setTypeface(chinacat);
 	    holder.count.setTypeface(chinacat);
-	    TextView diff = (TextView)rowView.findViewById(R.id.difficulty);
-	    diff.setTypeface(chinacat);
+	    holder.date.setTypeface(chinacat);
 	    
 	    return rowView;
 	  }
